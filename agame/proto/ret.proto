@@ -1,0 +1,532 @@
+syntax = "proto3";
+
+package ret;
+
+option go_package = "common/out/ret;ret";
+
+enum RET {
+  RET_ERROR = 0;  // 错误
+  RET_OK = 1;  // 正确
+  // 2-100留给网关，勿用
+  RET_SERVER_MAINTAIN = 2;  // 服务器维护中
+  RET_USER_NOT_EXIST = 3;  // 玩家不存在
+  RET_USER_NAME_REPEAT = 4;  // 姓名重复
+  RET_LOGIN_REPEAT = 5;  // 重复登录
+  RET_LOGIC_CLEAR = 6;  // 被强登
+  RET_USER_NAME_ILLEGAL = 7;  // 非法名字
+
+  RET_CONTENT_ILLEGAL = 101;  // 内容非法
+  RET_RESOURCE_NOT_EXIST = 102;  // 资源不存在
+  RET_NOT_ENOUGH_RESOURCE = 103;  // 资源不足
+  RET_CLIENT_VERSION_TOO_LOW = 104;  // 客户端版本过低
+  RET_INVALID_ARGUMENT = 105;  // 参数错误
+  RET_CONFIG_DATA_ERROR = 106;  // 配置错误
+  RET_SERVER_BUSY = 107;  // 服务器繁忙
+  RET_SERVER_ERROR = 108;  // 服务器错误
+  RET_LOGIN_ABNORMAL = 109;  // 登录异常
+  RET_LOGIN_IN_FORBID = 110;  // 禁止登录中
+  RET_MAIN_ROLE_TYPE_ILLEGAL = 111;  // 角色类型错误
+  RET_CREATE_USER_FAILED = 112;  // 创角失败
+  RET_USER_ACCOUNT_EXISTS = 113;  // 帐号存在
+  RET_ACTIVATE_CODE_ILLEGAL = 114;  // 激活码输入错误
+  RET_ACTIVATE_CODE_USED = 115;  // 激活码已使用
+  RET_ACCOUNT_HAS_ACTIVATED = 116;  // 账号已激活
+  RET_NO_NEED_ACTIVATE = 117;  // 不需要激活
+  RET_ACCOUNT_NOT_ACTIVATED = 118;  // 账号未激活
+  RET_CLIENT_REQUEST_ERROR = 119;  // 客户端请求错误
+  RET_RESOURCE_FULL = 120;  // 资源已满
+  RET_REWARD_NOT_AVAILABLE = 121;  // 没有奖励可领取
+  RET_FORMATION_IS_EMPTY = 122;  // 战斗阵容是空的
+  RET_REQUEST_RANK_SIZE_ILLEGAL = 123;  // 排行榜显示长度异常
+  RET_REQUEST_RANK_ID_ILLEGAL = 124;  // 排行榜id异常
+  RET_RANK_DATA_TYPE_ILLEGAL = 125;  // 排行榜数据类型异常
+  RET_FUNCTION_UNLOCK = 126;  // 功能未解锁
+  RET_ALREADY_TAKE_REWARD = 127;  // 奖励已领取
+  RET_CROSS_NOT_CONNECTED = 128;  // 跨服服务异常
+  RET_OPERATION_TOO_FREQUENCY = 129;  // 操作过于频繁
+  RET_AWARD_SIZE_LIMIT = 130;  // 奖励数量达到发送上限
+  RET_USER_SYNC_CACHE_EXPIRED = 131;  // 弱网缓存队列失效
+  RET_USER_OFFLINE = 132;  // 玩家离线
+  RET_IS_LOADING = 133;  // 正在拉取，拉取中
+  RET_OPERATION_IN_CD = 134;  // CD中
+  RET_RESET_TIME_DIFFERENT = 135;  // 重置时间不一致
+  RET_SERVER_NOT_OPEN = 136;  // 服务器未开服
+  RET_SERVER_MAINTENANCE = 137;  // 服务器维护中
+  RET_AWARD_CONDITION_NOT_ENOUGH = 138;  // 领奖条件不足
+  RET_BATTLE_TEAM_IS_EMPTY = 139;  // 战斗队伍是空的
+  RET_SERVER_FULL = 140;  // 服务器拥挤
+  RET_MAX_REGISTER_LIMIT = 141;  // 服务器停止注册
+  RET_INVALID_OPERATION = 142;  // 非法操作
+  RET_UNLOCK_CONDITION_NOT_COMPLETE = 143;  // 解锁条件未完成
+  RET_SERVER_FORBID_SET_TIME = 144;  // 禁止设置服务器时间
+  RET_USER_LEVEL_NOT_ENOUGH = 145;  // 玩家等级不足
+  RET_FUNCTION_PEER_UNLOCK = 146;  // 对方功能未解锁
+  RET_CHARACTER_NOT_EXIST = 147;  // 佣兵不存在
+  RET_CHARACTER_SIZE_EXCEED_LIMIT = 148;  // 佣兵数量超过上限
+  RET_TOKEN_IS_EXPIRED = 149;  // token已失效
+  RET_REQUEST_TIMEOUT = 150;  // 请求超时
+  RET_BAG_FULL_TO_MAIL = 151;  // 背包满了-奖励通过邮件发送（特殊提示）
+  RET_PET_FULL = 152;  // 战宠背包已满
+  RET_PET_EQUIPMENT_FULL = 153;  // 战宠装备背包已满
+  RET_FRAGMENT_FULL = 154;  // 碎片数量达到上限
+  RET_COMPANION_EQUIPMENT_FULL = 155;  // 佣兵装备背包已满
+  RET_GUILD_RESOURCE_FULL = 156;  // 公会资源数量达到上限
+  RET_SERVER_MERGE_HAS_AWARD = 157;  // 合服奖励已领取
+
+  RET_BATTLE_NOT_EXIST = 201;  // 战斗不存在
+  RET_BATTLE_CACHE_NOT_FIND = 202;  // 战斗数据失效
+  RET_BATTLE_LOGIC_NOT_FIND = 203;  // 战斗逻辑异常
+  RET_BATTLE_EXECUTE_FAILED = 204;  // 战斗执行失败
+  RET_BATTLE_SERVER_UNUSABLE = 205;  // 战斗服务器不可用
+  RET_BATTLE_REQUEST_FREQUENT = 206;  // 战斗请求太频繁
+  RET_CHECK_RESULT_UNMARSHAL_FAILED = 207;  // 战斗结果反序列化失败
+  RET_BATTLE_CHECK_FAILED = 208;  // 战斗校验失败
+  RET_BATTLE_REPLAY_NOT_EXIST = 209;  // 战斗回放不存在
+
+  RET_ITEM_NOT_EXISTS = 380;  // 道具不存在
+  RET_ITEM_NUM_LIMIT = 381;  // 道具数量到达上限
+  RET_ITEM_USE_NUM_LIMIT = 382;  // 道具使用次数到达上限
+
+  RET_TREASURE_BOX_EQUIPMENT_NEED_HANDLE = 450;  // 开宝箱-装备需要先处理
+  RET_TREASURE_BOX_IS_EMPTY = 451;  // 开宝箱-宝箱数量为空
+  RET_TREASURE_BOX_WAIT_UPGRADE_TIME = 452;  // 开宝箱-升级冷却时间中
+  RET_TREASURE_BOX_NOT_IN_WAIT_UPGRADE_TIME = 453;  // 开宝箱-不在升级冷却时间中
+  RET_TREASURE_BOX_REACH_MAX_LEVEL = 454;  // 开宝箱-宝箱达到最大等级
+  RET_TREASURE_BOX_WATCH_ADV_MAX = 455;  // 开箱子-达到当日观看广告最大次数
+  RET_TREASURE_BOX_UNSET_AUTO_OPEN_FILTER = 456;  // 开箱子-未设置自动开箱条件
+  RET_TREASURE_BOX_UNSET_BUY_UPGRADE_CNT_MAX = 457;  // 开箱子-购买升级次数达到最大
+  RET_TREASURE_BOX_UNSET_UPGRADE_NOT_ENOUGH_BUY_CNT = 458;  // 开箱子-购买升级次数不足
+  RET_HANG_UP_NO_AWARDS = 465;  // 挂机奖励-没有奖励可以领取
+  RET_HANG_UP_FREE_AWARDS_MAX = 466;  // 当日挂机奖励已经达到最大次数
+  RET_TREASURE_BOX_OPEN_TOO_FREQUENTLY = 467;  // 开箱操作太频繁
+
+  // 0.1.0 - 主线任务(470-480)
+  RET_QUEST_MAIN_NOT_EXIST = 470;  // 主线任务不存在
+  RET_QUEST_MAIN_NOT_COMPLETED = 471;  // 主线任务条件未达成
+  RET_QUEST_MAIN_ALREADY_COMPLETED = 472;  // 主线任务已经完成
+
+  RET_MAIN_DUNGEON_NO_STAGE_AWARD = 490;  // 主线副本-没有关卡奖励
+  RET_MAIN_DUNGEON_STAGE_AWARD_OBTAINED = 491;  // 主线副本-关卡奖励已领取
+  RET_MAIN_DUNGEON_STAGE_NO_PASS = 492;  // 主线副本-没有通关
+  RET_MAIN_DUNGEON_STAGE_AWARD_PRE_NO_OBTAIN = 493;  // 主线副本-之前的奖励没有领取
+  RET_MAIN_DUNGEON_NO_RECORD = 494;  // 主线副本-关卡没有记录
+  RET_MAIN_DUNGEON_NO_CHAPTER_REWARDS = 495;  // 主线副本-没有章节奖励
+  RET_MAIN_DUNGEON_NOT_OPEN = 496;  // 主线副本-关卡未开启
+
+  // 世界Boss
+  RET_WORLD_BOSS_IN_RESPAWN = 500;  // 世界Boss处于复活状态中
+  RET_WORLD_BOSS_NOT_IN_RESPAWN = 501;  // 世界Boss未处于复活状态中
+  RET_WORLD_BOSS_MAIN_DUNGEON_NOT_PASS = 502;  // 世界Boss前置主线关卡未通过
+
+  // 玩法次数
+  RET_PLAY_NUM_BUY_REACH_LIMIT = 510;  // 玩法次数购买达到上限
+  RET_PLAY_NUM_NOT_ENOUGH_NUM = 511;  // 没有足够的玩法次数
+
+  // 阵位信息
+  RET_FORMATION_UPGRADE_ALREADY_MAX_LEVEL = 520;  // 已经升级到最大等级
+  RET_FORMATION_BATTLE_TEAM_NAME_INVALID = 521;  // 布阵队伍名不合法
+  RET_FORMATION_LAYOUT_INVALID = 522;  // 阵位布局不合法
+
+  // 佣兵养成
+  RET_CHARACTER_COMPANION_QUALITY_ALREADY_MAX_LEVEL = 530;  // 佣兵品质到达最大等级
+  RET_CHARACTER_COMPANION_UPGRADE_QUALITY_NOT_MATCH_RULE = 531;  // 角色升级品质不符合消耗规则
+  RET_CHARACTER_COMPANION_UPGRADE_QUALITY_EQUIP_TERRITORY = 532;  // 被消耗佣兵在驻守领地中
+
+  // 分享
+  RET_SHARE_REACH_LIMIT = 540;  // 分享达到最大次数
+  RET_SHARE_NOT_OPEN = 541;  // 分享未开放
+
+  // 邮件系统
+  RET_MAIL_IS_NOT_LOAD = 550;  // 邮件未加载
+  RET_MAIL_AWARD_FAIL = 551;  // 领取邮件失败
+  RET_MAIL_DEL_FAIL = 552;  // 删除邮件失败
+  RET_MAIL_SEND_FAIL = 553;  // 发送邮件失败
+  RET_MAIL_READ_FAIL = 554;  // 阅读邮件失败
+
+  // 竞技场
+  RET_ARENA_MATCH_IN_FORBID_BATTLE_TIME = 560;  // 当前处于禁止挑战期
+  RET_ARENA_MATCH_NO_ENOUGHT_FREE_CNT_OR_GOLD = 561;  // 没有免费的刷新刺死或者金币不足
+  RET_ARENA_MATCH_ERROR = 562;  // 匹配失败
+  RET_USER_OBTAIN_DATA_TIME_OUT = 563;  // 获取玩家数据超时
+  RET_ARENA_LIKE_REACH_MAX_LIMIT = 564;  // 达到当日点赞最大限制值
+  RET_ARENA_LIKE_ALREADY = 565;  // 今日已经给给该玩家点过赞了
+  RET_ARENA_MATCH_IN_CD = 566;  // 处于匹配冷却时间中
+  RET_ARENA_NOT_IN_SCORE_RANK = 567;  // 当前玩家不在竞技场积分榜中
+  RET_ARENA_SCORE_RANK_TIMEOUT = 568;  // 竞技场积分榜单超时
+  RET_ARENA_ALREADY_OBTAIN_TASK_AWARD = 569;  // 竞技场任务已经领取奖励
+  RET_ARENA_NOT_OBTAIN_TASK_AWARD = 570;  // 竞技场任务未达到领奖条件
+
+  // 佣兵抽卡
+  RET_RECRUIT_NOT_OPEN = 580;  // 卡池未开放
+  RET_RECRUIT_AWARD_EXTRA_NOT_ENOUGH = 581;  // 卡池额外奖励次数不足
+  RET_RECRUIT_ROLL_EXCEED = 582;  // 卡池抽奖达到上限
+
+  // 技能树
+  RET_SKILLTREE_PREID_NOT_ACTIVE = 590;  // 前置技能树未激活
+  RET_SKILLTREE_ACTIVE_SAME_OPTION = 591;  // 激活选项未改变
+
+  // 佣兵装备
+  RET_COMPANION_PROFESSION_NOT_EXIST = 600;  // 佣兵职业不存在
+  RET_COMPANION_EQUIPMENT_TYPE_ERROR = 601;  // 佣兵装备类型错误
+  RET_COMPANION_EQUIPMENT_NOT_EXIST = 602;  // 佣兵装备不存在
+  RET_COMPANION_EQUIPMENT_QUALITY_EXCEED_LIMIT = 603;  // 佣兵装备品质超过上限
+  RET_COMPANION_EQUIPMENT_IN_FORMATION = 604;  // 佣兵装备在阵位中
+  RET_COMPANION_EQUIPMENT_LOCKED = 605;  // 佣兵装备已上锁
+  RET_COMPANION_EQUIPMENT_CAN_NOT_DECOMPOSE = 606;  // 仅最高品质佣兵装备可以分解
+
+  // 1.1.0-神兽秘境（610~620）
+  RET_SECRET_NOT_OPEN = 610;  // 神兽秘境未开启（等级不足）
+  RET_SECRET_PRE_CHAPTER_NOT_PASS = 611;  // 神兽秘境前置章节未通关
+  RET_SECRET_STAGE_IS_PASS = 612;  // 神兽秘境关卡已通关
+  RET_SECRET_BOSS_IS_END = 613;  // 神兽秘境boss已结束
+  RET_SECRET_BOSS_NOT_UNLOCK = 614;  // 神兽秘境boss未解锁
+  RET_SECRET_BOSS_IN_CD = 615;  // 神兽秘境boss冷却中
+  RET_SECRET_BOSS_NOT_EXIST = 616;  // 神兽秘境boss不存在
+  RET_SECRET_BOSS_IN_AWARD = 617;  // 神兽秘境boss排行榜发奖中
+  RET_SECRET_BOSS_IS_IN_ROOM = 618;  // 神兽秘境boss已在房间中
+  RET_SECRET_BOSS_CROSS_IS_LOADING = 619;  // 神兽秘境boss跨服数据加载中
+
+  // 好友系统
+  RET_FRIEND_SYSTEM_ALREADY_IN_FRIEND = 650;  // 在好友列表中
+  RET_FRIEND_SYSTEM_ALREADY_IN_BLACK = 651;  // 在黑名单中
+  RET_FRIEND_SYSTEM_REPEAT_APPLY = 652;  // 重复申请
+  RET_FRIEND_SYSTEM_NOT_APPLY = 653;  // 没有申请好友
+  RET_FRIEND_SYSTEM_ALREADY_REACH_MAX = 654;  // 达到最大限制
+  RET_FRIEND_SYSTEM_PEER_ALREADY_REACH_MAX = 655;  // 对方好友数达到最大限制
+  RET_FRIEND_SYSTEM_PEER_REFUSE = 656;  // 对方拒绝申请
+  RET_FRIEND_SYSTEM_PEER_NOT_APPLY = 657;  // 对方没有申请添加好友
+  RET_FRIEND_SYSTEM_NOT_FRIEND = 658;  // 不是好友
+  RET_FRIEND_SYSTEM_NOT_IN_BLACK = 659;  // 不在黑名单中
+  RET_FRIEND_SYSTEM_DEAL_ACKS = 660;  // 需要处理相应的请求
+  RET_FRIEND_SYSTEM_ALREADY_GIVE_GIFT = 661;  // 今天已经给该玩家送过礼物
+  RET_FRIEND_SYSTEM_ALREADY_RECV_GIFT = 662;  // 已经接收过礼物
+  RET_FRIEND_SYSTEM_NOT_IN_RECV_GIFT = 663;  // 不在接收列表中
+  RET_FRIEND_SYSTEM_RECV_GIFT_MAX = 664;  // 接收礼物到达最大限制
+  RET_FRIEND_SYSTEM_GIVE_GIFT_MAX = 665;  // 接收礼物到达最大限制
+  RET_FRIEND_SYSTEM_SEARCH_NOT_USER = 666;  // 没有搜索到玩家
+  RET_FRIEND_NOT_SAME_SERVER = 667;  // 不在同一服务器不能添加好友
+  RET_FRIEND_SYSTEM_ALREADY_IN_PEER_BLACK = 668;  // 在对方的黑名单中
+  RET_FRIEND_SYSTEM_BLACK_NOT_SAME_SERVER = 669;  // 不在同一服务器不能拉黑
+  // 聊天
+  RET_CHAT_IN_CD_TIME = 670;  // 在聊天 cd 时间内
+  RET_CHAT_CONTENT_HAS_FORBID_WORD = 671;  // 聊天内容含有敏感词
+  RET_CHAT_USER_NOT_ONLINE = 672;  // 玩家不在线不能发送消息
+  RET_CHAT_REFUSE_PRIVATE = 673;  // 玩家拒绝私聊
+  RET_CHAT_NOT_SAME_SERVER = 674;  // 不在同一服务器不能私聊
+  RET_CHAT_IN_FORBID = 675;  // 禁言中
+  // 地牢
+  RET_INFINITE_DUNGEON_UNLOCK = 680;  // 未解锁
+  RET_INFINITE_DUNGEON_UN_OPEN = 681;  // 未开放
+  RET_INFINITE_DUNGEON_STAGE_AWARD_OBTAINED = 682;  // 关卡阶段奖励已领取
+  RET_INFINITE_DUNGEON_STAGE_AWARD_PRE_UN_OBTAIN = 683;  // 关卡阶段奖励之前的未领取
+  RET_INFINITE_DUNGEON_STAGE_NOT_PASS = 684;  // 关卡未通关
+  RET_INFINITE_DUNGEON_NO_RECORD = 685;  // 关卡不记录像
+  RET_INFINITE_DUNGEON_FACTION_ERR = 686;  // 阵营不匹配
+  RET_INFINITE_DUNGEON_HANGUP_NO_AWARDS = 687;  // 没有挂机奖励可以领取
+  // 公会BOSS
+  RET_GUILD_BOSS_UN_OPEN = 700;  // 未开放
+  RET_GUILD_BOSS_CHALLENGE_CNT_NOT_ENOUGH = 701;  // 挑战次数不足
+  RET_GUILD_BOSS_CHALLENGE_TITLE_INVALID = 702;  // 见习成员不能挑战公会BOSS
+  // 公会
+  RET_GUILD_USER_IN_GUILD = 750;  // 玩家在公会中
+  RET_GUILD_MEMBERS_REACH_LIMIT = 751;  // 公会玩家达到上限
+  RET_GUILD_JOIN_DONT_MATCH_CONDITION = 752;  // 不符合加入条件
+  RET_GUILD_JOIN_REFUSE = 753;  // 拒绝加入公会
+  RET_GUILD_JOIN_WAIT_APPROVE = 754;  // 申请加入成功,等待批准
+  RET_GUILD_USER_NOT_IN_GUILD = 755;  // 玩家没有公会
+  RET_GUILD_USER_NOT_AUTH_OPERATOR = 756;  // 玩家没有权限操作
+  RET_GUILD_USER_IS_PROABTIONARY = 757;  // 见习玩家不能被任命
+  RET_GUILD_TITLE_IS_MAX = 758;  // 该职位数已达上限
+  RET_GUILD_USER_NOT_APPLY_JOIN = 759;  // 玩家没有申请加入公会
+  RET_GUILD_NOT_SEARCH_GUILD = 760;  // 没有搜索到公会
+  RET_GUILD_ICON_LOCKED = 761;  // 公会图标没有解锁
+  RET_GUILD_USER_DAILY_SIGN_MAX_NUM = 762;  // 达到当日最大签到次数
+  RET_GUILD_ATTORN_USER_TITLE_LARGER_OR_EQUAL_THAN_ME = 763;  // 转让玩家职位等于或者大于自己的职位
+  RET_GUILD_NAME_REPEATED = 764;  // 公会重名
+  RET_GUILD_FAST_JOIN_NOT_GUILD = 765;  // 没有符合自动加入条件的公会
+  RET_GUILD_TECH_IN_UPGRADING = 766;  // 公会科技处于升级中
+  RET_GUILD_TECH_UNLOCK_GUILD_LEVEL_DONT_MATCH = 767;  // 公会科技升级公会等级不符合
+  RET_GUILD_TECH_PRE_NODE_DONT_MATCH = 768;  // 公会科技升级,
+  RET_GUILD_TECH_NODE_MAX_LEVEL = 769;  // 公会科技节点已经升级到最大等级
+  RET_GUILD_TECH_NODE_NOT_IN_UPGRADING = 770;  // 公会科技节点未处于升级中
+  RET_GUILD_QUEST_ALREADY_OBTAIN_AWARD = 771;  // 已经领取奖励
+  RET_GUILD_QUEST_NOT_REACH_OBTAIN_CONDITION = 772;  // 未达到领奖条件
+  RET_GUILD_USER_APPLY_GUILD_MAX = 773;  // 玩家申请公会数达到上限
+  RET_GUILD_GUILD_LIMIT_USER_APPLY = 774;  // 公会可以接收申请的玩家数达到上限
+  RET_GUILD_PREFIX_NAME_REPEATED = 775;  // 公会前缀名重复
+  RET_GUILD_ASSISTED_REACH_LIMIT = 776;  // 玩家被协助次数满
+  RET_GUILD_USER_NOT_REQ_ASSIST = 777;  // 被协助玩家没有发起协助
+  RET_GUILD_CONTENT_HAS_FORBID_WORD = 778;  // 公会玩家输入内容含有敏感词
+  RET_GUILD_SIGN_POINT_NOT_ENOUGH = 779;  // 公会签到积分不足
+  RET_GUILD_GET_GUILD_LIST_IN_CD = 780;  // 查询公会列表频繁
+  RET_GUILD_APPLY_CANCEL_OR_EXPIRED = 781;  // 玩家取消申请或者申请已过期
+  RET_GUILD_DETAIL_NOT_FOUND = 782;  // 公会数据未找到
+  RET_GUILD_MERGE_REQUEST_EXIST = 783;  // 公会合并请求已存在
+  RET_GUILD_NOT_EXIST = 784;  // 公会不存在
+  RET_GUILD_MERGE_NOT_MATCH_CONDITION = 785;  // 公会合并不符合条件
+  RET_GUILD_MERGE_REQUEST_NOT_EXIST = 786;  // 公会合并请求不存在
+  RET_GUILD_MERGE_HANDLE_NOT_SENDER = 787;  // 不是发起者不能取消合并请求
+  RET_GUILD_IN_MERGE = 788;  // 公会正在合并中
+  RET_GUILD_MERGE_REQUEST_COUNT_EXCEED_LIMIT = 789;  // 公会合并请求数量超限
+  // 迷宫
+  RET_ROGUE_IS_NOT_END = 800;  // 迷宫未结束
+  RET_ROGUE_DIFFICULTY_CANNOT_OPEN = 801;  // 该难度迷宫不可挑战
+  RET_ROGUE_INIT_MAP_FAILED = 802;  // 迷宫初始化失败
+  RET_ROGUE_IS_IN_MAP = 803;  // 玩家已经在迷宫中
+  RET_ROGUE_MAP_NOT_EXIST = 804;  // 迷宫地图不存在
+  RET_ROGUE_GRID_NOT_EXIST = 805;  // 迷宫格子不存在
+  RET_ROGUE_GRID_STATUS_ERROR = 806;  // 迷宫格子状态错误
+  RET_ROGUE_GRID_TYPE_ERROR = 807;  // 迷宫格子类型错误
+  RET_ROGUE_SHOP_NOT_EXIST = 808;  // 迷宫商店不存在
+  RET_ROGUE_SHOP_REFRESH_COUNT_MAX = 809;  // 迷宫商店刷新次数达到上限
+  RET_ROGUE_GOLD_NOT_ENOUGH = 810;  // 迷宫局内货币不足
+  RET_ROGUE_SHOP_GOODS_NOT_EXIST = 811;  // 迷宫商店商品不存在
+  RET_ROGUE_SHOP_GOODS_SELL_OUT = 812;  // 迷宫商店商品已售罄
+  RET_ROGUE_IS_NOT_OPEN = 813;  // 迷宫未开启
+  RET_ROGUE_RECRUIT_COUNT_OVERRUN = 814;  // 迷宫招募次数超过上限
+  RET_ROGUE_RECRUIT_CHARACTER_EXIST = 815;  // 迷宫招募状态错误
+  RET_ROGUE_RECRUIT_CHARACTER_NOT_EXIST = 816;  // 迷宫招募佣兵不存在
+  RET_ROGUE_ITEM_NOT_EXIST = 817;  // 迷宫消耗品不存在
+  RET_ROGUE_CHARACTER_NOT_DEAD = 818;  // 迷宫没有死亡佣兵
+  RET_ROGUE_SPRING_REVIVE_CHARACTER_LIMIT = 819;  // 迷宫泉水复活佣兵数量超限
+  RET_ROGUE_ITEM_SIZE_EXCEED_LIMIT = 820;  // 迷宫消耗品数量超过上限
+  RET_ROGUE_GRID_NOT_LAST = 821;  // 迷宫格子不是最后一个
+  RET_ROGUE_DEVICE_USED = 822;  // 迷宫装置已经使用
+  RET_ROGUE_BOOK_NOT_EXIST = 823;  // 迷宫图鉴未获得
+  RET_ROGUE_BOOK_HAS_AWARD = 824;  // 迷宫图鉴已领奖
+  RET_ROGUE_TASK_HAS_AWARD = 825;  // 迷宫周任务已领奖
+  RET_ROGUE_POINT_NOT_ENOUGH = 826;  // 迷宫积分不足
+  RET_ROGUE_TREE_HAS_ACTIVE = 827;  // 迷宫科技树节点已经激活
+  RET_ROGUE_TREE_PRE_NOT_ACTIVE = 828;  // 迷宫科技树前置节点未激活
+  RET_ROGUE_RECRUIT_WISH_COUNT_EXCEED_LIMIT = 829;  // 迷宫酒馆心愿单数量超过上限
+  RET_ROGUE_INIT_CHARACTER_COUNT_EXCEED_LIMIT = 830;  // 迷宫初始佣兵数量超过上限
+  RET_ROGUE_DIFF_NOT_PASS = 831;  // 该难度迷宫未有人首通
+
+  // 小游戏
+  RET_CASUAL_GAME_PLAY_CNT_NOT_ENOUGH = 850;  // 小游戏玩法次数不足
+  RET_CASUAL_GAME_DUPLICATE_FINISH = 851;  // 小游戏重复结束
+  RET_CASUAL_GAME_UN_FINISH = 852;  // 小游戏未结束
+  // 割草
+  RET_MOW_ALREADY_PASSED = 860;  // 割草副本已经通关
+  // 战令
+  RET_BATTLE_PASS_NOT_OPEN = 870;  // 战令活动未开启
+  // 背饰
+  RET_BACK_NOT_EXIST = 880;  // 背饰不存在
+  RET_BACK_CANT_RESET = 881;  // 背饰不能重置
+  RET_BACK_MAX_STAR_CANT_DECOMPOSE = 882;  // 最高星背饰不能分解
+  RET_BACK_LOCKED = 883;  // 背饰已上锁，不能操作
+  RET_BACK_CANT_UPGRADE_STAR = 884;  // 不能升星
+  RET_BACK_BAG_FULL = 885;  // 背饰背包已满
+  RET_BACK_EXCEED_CANT_UPGRADE_LV = 886;  // 超过最大等级不能升级
+  RET_BACK_IN_FORMATION = 887;  // 背饰在阵位中
+  // 广告
+  RET_ADVERTISE_NUM_NOT_ENOUGH = 901;  // 没有足够的广告次数
+  // 礼包码
+  RET_GC_REPEATED_ORDER_ID = 902;  // 礼包码订单id重复
+  RET_GC_AWARD_ERROR = 903;  // 兑换失败，礼包码错误
+  RET_GC_MORE_TIME = 904;  // 兑换过快，请稍后再兑换
+  RET_GC_EXPIRED = 905;  // 礼包码已过期
+  RET_GC_IS_USED = 906;  // 礼包码已被使用
+  RET_GC_ERR = 907;  // 兑换失败，使用受限
+  RET_GC_NOT_IN_VALIDATE_TIME = 908;  // 礼包码不在有效期内
+
+  // 爬塔
+  RET_TOWER_AUTO_SELECT_BUFF = 920;  // 自动选择 buff 错误
+  RET_TOWER_SELECT_BUFF_ERROR = 921;  // 选择 Buff 错误
+  RET_TOWER_BATTLE_INVALID_BECAUSE_OF_CROSS_DAY = 922;  // 战斗因为跨天失效
+  RET_TOWER_SWEEP_CFG_NOT_OK = 923;  // 扫荡配置还未生成，请稍后尝试
+
+  // 短期战令
+  RET_SHORT_BATTLE_PASS_NOT_OPEN = 930;  // 短期战令活动未开启
+  RET_SHORT_BATTLE_PASS_ALREADY_OPEN = 931;  // 短期战令活动已开启
+  // 领地
+  RET_TERRITORY_FRIEND_NOT_OPEN = 940;  // 好友领地未开启
+  RET_TERRITORY_EQUIP_COMP_NUM_LIMIT = 941;  // 超出佣兵槽位上限
+  RET_TERRITORY_EQUIP_COMP_ADVANCE_ERR = 942;  // 不能上阵重复进阶码的佣兵
+  // 主题活动
+  RET_THEME_ACTIVITY_NOT_OPEN = 950;  // 主题活动未开启
+  RET_THEME_ACTIVITY_UN_SET_WISH = 951;  // 主题活动心愿未设置
+  // 公会GVE
+  RET_GUILD_GVE_NOT_OPEN = 960;  // 公会GVE未开启
+  RET_GUILD_GVE_STAGE_END = 961;  // 关卡已结束
+  RET_GUILD_GVE_TP_UN_FINISH = 962;  // 阶段未通关
+  RET_GUILD_GVE_ADDITION_LIMIT = 963;  // 今日加成次数已用完
+  RET_GUILD_GVE_TARGET_UNLOCK = 964;  // 目标用户未解锁公会GVE
+  RET_GUILD_GVE_BOX_AWARD_GOT = 965;  // 该位置宝箱奖励已被其他人领取
+  RET_GUILD_GVE_BOX_AWARD_EMPTY = 966;  // 宝箱奖励已被抽完，请抽无限牌
+  RET_GUILD_GVE_RECEIVE_NUM_EXCEED = 967;  // 受赠次数超过上限
+
+  // 1.1.0-跨服竞技场
+  RET_CROSS_PEAK_ARENA_NEED_REFRESH_MATCH_DATA = 970;  // 需要重新刷新匹配数据
+  RET_CROSS_PEAK_ARENA_REFRESH_IN_CD = 971;  // 匹配刷新冷却中
+  RET_CROSS_PEAK_ARENA_NOT_IN_OPEN = 972;  // 活动未在开启期间
+  RET_CROSS_PEAK_ARENA_NOT_IN_SHOW = 973;  // 活动未在展示期
+  RET_CROSS_PEAK_ARENA_CLOSE = 974;  // 活动已结束
+  RET_CROSS_PEAK_ARENA_NOT_IN_OPEN_OR_SHOW = 975;  // 活动未在开启或者展示期
+  RET_CROSS_PEAK_ARENA_NO_ACTIVITY_INFO = 976;  // 没有活动信息
+  RET_CROSS_PEAK_ARENA_NEED_SET_ATTACK_TEAM = 977;  // 需要设置进攻队伍
+
+  // 1.1.50-通用礼包
+  RET_PACK_NUM_LIMIT = 980;  // 已购买礼包数量达到上限
+  RET_PACK_GROUP_NOT_MATCH = 981;  // 礼包组不匹配
+  RET_PACK_ACT_NOT_OPEN = 982;  // 礼包对应的活动未开启
+
+  // 1.1.50 领地领主
+  RET_TERRITORY_LORD_INFO_IS_CHANGE = 990;   // 对方领主数据已发生改变(领主变化or迎战状态变化)
+  RET_TERRITORY_LORD_NOT_FOUND = 991;   // 未找到领主数据
+  RET_TERRITORY_VASSAL_NOT_FOUND = 992;   // 未找到封臣数据
+  RET_TERRITORY_CONFRONT_STATE_EXCEPTION = 993;   // 迎战状态异常
+  RET_TERRITORY_HAS_NOT_LORD = 994;   // 无领主(脱离挑战)
+  RET_TERRITORY_LORD_IS_CHANGE = 995;   // 领主已发生改变(脱离挑战)
+  RET_TERRITORY_LORD_GRANT_IS_AWARDED = 996;   // 封赏奖励已领取
+  RET_TERRITORY_LORD_LEVY_IS_AWARDED = 997;   // 已征税
+  RET_TERRITORY_LORD_CANT_CAPTURED = 998;   // 该玩家不能被征服
+  RET_TERRITORY_TARGET_IN_PROTECTING = 999;   // 征服的对象在保护期
+  RET_TERRITORY_RECOMMEND_LIST_REFRESH_IN_CD = 1000;  // 征战列表刷新cd中
+
+  // 战宠
+  RET_PET_ALREADY_IN_FORMATION = 1010;  // 战宠已在阵位中
+
+  // 1.2.0 永恒战场
+  RET_SLG_NOT_IN_SHOW_TIME = 1018;  // 永恒战场未在展示期或正在赛季结算中
+  RET_SLG_BATTLE_PASS_BUY_LV_TIME_LIMIT = 1019;  // 战令等级购买时间未到
+  RET_SLG_REQUEST_TO_FAST = 1020;  // 请求过于频繁
+  RET_SLG_USER_NOT_FOUND = 1021;  // 未找到玩家(玩家未落地)
+  RET_SLG_CITY_UNLOCK = 1022;  // 城池未解锁
+  RET_SLG_SEASON_NOT_OPEN = 1023;  // 永恒战场赛季未开启
+  RET_SLG_MONSTER_IS_DEAD = 1024;  // 怪物已死亡(CD中)
+  RET_SLG_BOSS_TEAM_NOT_FOUND = 1025;  // 未找到boss队伍
+  RET_SLG_BOSS_TEAM_ALREADY_JOINED = 1026;  // 已加入boss队伍
+  RET_SLG_MOVE_MOVING = 1027;  // 行军中，不可重复行军
+  RET_SLG_CANCEL_MOVE_CITY = 1028;  // 城战中，不可撤军
+  RET_SLG_CANCEL_MOVE_UNMOVING = 1029;  // 未行军，不可撤军
+  RET_SLG_MOVE_PATH_ERROR = 1030;  // 行军路径错误
+  RET_SLG_MONSTER_NOT_FOUND = 1031;  // 野怪不存在
+  RET_SLG_GUILD_NOT_FOUND = 1032;  // 未找到公会(公会未落地)
+  RET_SLG_TEAM_NOT_FOUND = 1033;  // 未找到队伍
+  RET_SLG_TEAM_STATUS_NOT_MOVE = 1034;  // 队伍状态不是行军，无法撤军
+  RET_SLG_MOVE_NOT_FOUND = 1035;  // 未找到行军数据
+  RET_SLG_MOVE_TIME_ERROR = 1036;  // 行军时间错误
+  RET_SLG_GUILD_IN_LIMIT_TIME = 1037;  // 城战中，不能进出公会
+  RET_SLG_BOSS_TEAM_BATTLE_FINISHED = 1038;  // 组队boss队伍战斗已开始或结束,无法撤军
+  RET_SLG_BOSS_NO_TEAMS_TO_JOIN = 1039;  // 组队boss快速加入失败(没有满足得队伍)
+  RET_SLG_SUPPLY_REACHED_LIMITED = 1040;  // 补给资源已达上限(使用补给令时)
+  RET_SLG_BOSS_DISTANCE_TOO_FAR = 1041;  // 组队boss距离太远，开打前行军步到
+  RET_SLG_CITY_QUEST_PROGRESS_NOT_ENOUGH = 1042;  // 城池任务进度不足
+  RET_SLG_BATTLE_PASS_QUEST_HAS_AWARD = 1043;  // 战令任务已领取
+  RET_SLG_BATTLE_PASS_QUEST_NOT_FINISHED = 1044;  // 战令任务未完成
+  RET_SLG_BOSS_TEAM_REPEATED_JOIN = 1045;  // 重复加入boss队伍
+  RET_SLG_BOSS_TEAM_FULL = 1046;  // 组队boss 队伍已满
+  RET_SLG_MAP_FULLED = 1047;  // 地图已满
+  RET_SLG_PROVINCE_NOT_SAME = 1048;  // 你和目标不在同一个州，请先迁城
+  RET_SLG_BORN_PROVINCE_FULL = 1049;  // 公会所在出生州已满
+
+  // 1.2.0 许愿池（钓鱼）
+  RET_WISH_POOL_NOT_OPEN = 1050;  // 钓鱼未开启
+  RET_WISH_POOL_DAILY_AWARD_ALREADY = 1051;  // 今日奖励已领取
+  RET_WISH_POOL_EXCHANGE_BAIT_NOT_ENOUGH = 1052;  // 兑换鱼饵不足
+  RET_WISH_POOL_DAILY_BAIT_FULL = 1053;  // 当日获取鱼饵数量已满
+
+  // 1.2.0-公会红包
+  RET_GUILD_RED_PACKET_DAILY_PICK_MAX = 1060;  // 今日领取红包次数已达上限
+  RET_GUILD_RED_PACKET_ALREADY_PICK = 1061;  // 已领取过该红包
+  RET_GUILD_RED_PACKET_EXPIRED = 1062;  // 该红包已经过期
+  RET_GUILD_RED_PACKET_NULL = 1063;  // 该红包已经不存在
+
+  // 1.2.0-永恒战场
+  RET_SLG_MARCH_MULTI_TEAMS = 1070;  // 不允许出征多支队伍
+  RET_SLG_CITY_NOT_FOUND = 1071;  // 城池未找到
+  RET_SLG_CITY_NOT_OCCUPIED = 1072;  // 城池未被占领
+  RET_SLG_CITY_DECLARATION_HAS_FORBID_WORD = 1073;  // 集结公告含有敏感词
+  RET_SLG_CITY_MARCH_FULL = 1074;  // 城池行军队伍已满
+
+  // 1.2.60-一番赏
+  RET_GACHA_NOT_OPEN = 1080;  // 一番赏未开启
+  RET_GACHA_AWARD_NOT_SELECT = 1081;  // 有可选奖励未选择，不能抽奖
+  RET_GACHA_S_REWARD_NOT_COMPLETE = 1082;  // S奖励未完成，不能重置奖池
+  RET_GACHA_QUEST_AWARD_ALREADY = 1083;  // 任务奖励已领取
+  RET_GACHA_QUEST_NOT_COMPLETE = 1084;  // 任务未完成
+  RET_GACHA_ACCUMULATED_AWARD_ALREADY = 1085;  // 累抽奖励已领取
+  RET_GACHA_ACCUMULATED_CONDITION_NOT_COMPLETE = 1086;  // 累抽奖励条件未达成
+
+  // 1.2.60 - 炼金工坊
+  RET_ALCHEMY_NOT_OPEN = 1090;  // 炼金工坊未开启
+  RET_ALCHEMY_REQUEST_NOT_FOUND = 1091;  // 未找到求助数据(给与帮助时,可能求助已被删除)
+
+  // 1.3.0-存钱罐
+  RET_PIGGY_BANK_NOT_OPEN = 1100;  // 存钱罐未开启
+  RET_PIGGY_BANK_NOT_ENOUGH = 1101;  // 存钱罐存款不足
+  RET_PIGGY_BANK_AWARD_ALREADY = 1102;  // 存钱罐奖励已领取
+
+  // 1.3.0 - 公会战役
+  RET_GUILD_GVG_NOT_OPEN = 1110;  // 公会战役未开启
+  RET_GUILD_GVG_ENEMY_MEMBER_NOT_FOUND = 1111;  // 该玩家不在敌方公会中
+  RET_GUILD_GVG_ENEMY_IS_DIED = 1112;  // 敌方玩家已死亡
+  RET_GUILD_GVG_CHALLENGE_COUNT_NOT_ENOUGH = 1113;  // 挑战次数不足
+  RET_GUILD_GVG_GET_ENEMY_BATTLE_TEAM_FAILED = 1114;  // 获取敌方战斗阵容失败
+  RET_GUILD_GVG_HAS_CHALLENGED = 1115;  // 已挑战过该玩家
+  RET_GUILD_GVG_ENEMY_NOT_CORE_MEMBER = 1116;  // 对方非主将
+  RET_GUILD_GVG_ENEMY_HAS_NOT_SHIELD = 1117;  // 对方暂无护盾
+  RET_GUILD_GVG_NOT_IN_BATTLE_TIME = 1118;  // 不在比赛时间内
+  RET_GUILD_GVG_BATTLE_LOG_NOT_FOUND = 1119;  // 战绩未找到(可能已被过期删除)
+  RET_GUILD_GVG_BATTLE_LOG_ALREADY_LIKED = 1120;  // 该战绩已被您点过赞
+  RET_GUILD_GVG_BATTLE_LOG_LIKE_LIMIT = 1121;  // 点赞次数已达上限
+  RET_GUILD_GVG_HAS_WEAKENED = 1122;  // 已削弱过该玩家
+  RET_GUILD_GVG_CONTRIBUTE_RANK_NOT_FOUND = 1123;  // 未找到该贡献排行榜
+  RET_GUILD_GVG_CHALLENGE_STATE_NOT_MATCH = 1124;  // 挑战前后玩家状态不一致
+  RET_GUILD_GVG_IN_MATCHING = 1125;  // 比赛还未匹配完成
+
+  // 1.4.0-宝石
+  RET_GEM_GET_CONFIG_ERR = 1130;  // 取配置错误
+  RET_GEM_COMPOSE_LEVEL_ERR = 1131;  // 合成等级错误
+  RET_GEM_COMPOSE_RAND_GEM_ERR = 1132;  // 随机宝石出错
+  RET_GEM_BOARD_UNLOCK = 1133;  // 宝石棋盘未解锁
+
+  // 1.4.0-跨服组队
+  RET_CROSS_TEAM_ACTIVITY_NOT_OPEN = 1141;  // 跨服组队活动未开启
+  RET_CROSS_TEAM_NO_AREA = 1142;  // 未找到对应的区域
+  RET_CROSS_TEAM_USER_ALREADY_IN_TEAM = 1143;  // 玩家已经在队伍中
+  RET_CROSS_TEAM_TEAM_NOT_EXIST = 1144;  // 队伍不存在
+  RET_CROSS_TEAM_ALREADY_FULL = 1145;  // 队伍已满
+  RET_CROSS_TEAM_JOIN_LEVEL_LIMIT = 1146;  // 加入条件限制
+  RET_CROSS_TEAM_USER_NOT_IN_TEAM = 1147;  // 玩家不在队伍中
+  RET_CROSS_TEAM_USER_NOT_LEADER = 1148;  // 玩家不是队长
+  RET_CROSS_TEAM_IMMUTABLE = 1149;  // 不可变更
+  RET_CROSS_TEAM_NOT_FOUND_MATCH_TEAM = 1150;  // 没有做找到符合条件的队伍
+  RET_CROSS_TEAM_MONSTER_ATTACKED_BY_OTHER = 1151;  // 怪物被其他玩家攻击
+  RET_CROSS_TEAM_MONSTER_ALREADY_KILLED = 1152;  // 怪物已被击杀
+  RET_CROSS_TEAM_TIME_BOSS_EXPIRED = 1153;  // 限时boss已过期
+
+  // 1.4.50 - 节庆活动
+  RET_CELEBRATION_TREE_ALREADY_AWARDED = 1160;  // 节庆台该阶段奖励已领取
+  RET_CELEBRATION_NOT_OPEN = 1161;  // 节庆活动未开启
+  RET_CELEBRATION_SCORE_NOT_ENOUGH = 1162;  // 节庆活动积分不足
+  RET_CELEBRATION_TEAM_BUY_NOT_OPEN = 1163;  // 节庆活动团购未开启
+  RET_CELEBRATION_TEAM_BUY_NUM_LIMIT = 1164;  // 节庆活动团购次数已达上限
+  RET_CELEBRATION_AREA_NOT_FOUND = 1165;  // 未找到该玩家所在服务器的战区
+  RET_CELEBRATION_BOSS_INVALID = 1166;  // 该boss已失效
+  RET_CELEBRATION_PRAY_CARD_RECEIVED = 1167;  // 该祈愿卡已领取
+  RET_CELEBRATION_PRAY_CARD_NOT_FOUND = 1168;  // 未找到该祈愿卡
+  RET_CELEBRATION_AREA_MATCHING = 1169;  // 战区匹配中
+  RET_CELEBRATION_BOSS_EXCEED_LIMIT = 1170;  // 超过boss数量上限
+
+  // 1.4.50 - 推荐阵容
+  RET_RECOMMEND_TEAM_ALREADY_AWARDED = 1175;  // 推荐阵容奖励已领取
+}
+
+enum GRPC {
+  RESULT_ERROR = 0;  // 错误
+  RESULT_OK = 1;  // 正确
+  RESULT_CMD_ERROR = 2;  // 命令错误
+  RESULT_TIMEOUT = 3;  // 超时
+  RESULT_PARAMS_ERROR = 4;  // 参数错误
+  RESULT_SID_ERROR = 5;  // sid错误
+  RESULT_RELOAD_ERROR = 6;  // 重载错误
+  RESULT_REDIS_OP_ERROR = 7;  // redis操作错误
+  RESULT_SEND_MAIL_ERROR = 8;  // 邮件发送失败
+
+  RESULT_RECHARGE_REPEATED_ORDER_ID = 101;  // 重复订单
+  RESULT_RECHARGE_REPEATED_REFUND = 621;  // 重复退款
+  RESULT_RECHARGE_ORDER_NOT_EXIST = 622;  // 订单不存在
+  RESULT_RECHARGE_ORDER_SAVE_ERROR = 623;  // 订单落地失败
+}

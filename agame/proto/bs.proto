@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+import "base.proto";
+package bs;
+option go_package = "common/out/bs;bs";
+
+enum ID {
+  MSG_ENUM_DEFAULT = 0;
+
+  MSG_BEGIN = 200000;  // bs协议开始
+    MSG_END = 299999;  // bs协议结束
+
+  MSG_S2C_ReplyBattleReport = 200001;
+  MSG_C2S_CheckBattleResult = 200002;
+  MSG_S2C_CheckBattleResult = 200003;
+    MSG_C2S_ClientTestBattle = 200004;
+    MSG_S2C_ClientTestBattle = 200005;
+    MSG_S2C_GetBattleReplay = 200007;  // 获取战斗回放
+    MSG_C2S_RestartBattle = 200009;  // 重新挑战
+    MSG_S2C_RestartBattle = 200010;  // 重新挑战响应
+    MSG_C2S_IsBattleFinished = 200011;  // 战斗是否已完成
+    MSG_S2C_IsBattleFinished = 200012;  // 战斗是否已完成响应
+}
+
+message S2C_ReplyBattleReport {
+  base.BattleReport report = 1;
+    bool start_battle = 2;  // 是否直接开始
+}
+
+// 验证战斗结果请求
+message C2S_CheckBattleResult {
+  base.BattleResult result = 1;
+}
+
+// 验证战斗结果响应
+message S2C_CheckBattleResult {
+    uint32 ret = 1;  // 响应
+    uint64 battle_id = 2;  // 战斗 id
+  string debug_info = 3;  // 增加客户端调试信息字段
+}
+
+// 获取战斗回放响应
+message S2C_GetBattleReplay {
+    uint32 ret = 1;  // 返回码
+  base.BattleReport report = 2;  // 战斗阵容
+  base.BattleResult result = 3;  // 战斗结果
+}
+
+// 重新挑战
+message C2S_RestartBattle {
+  uint64 battle_id = 1;  // 战斗ID
+}
+
+// 重新挑战响应 暂时仅刷新随机数种子
+message S2C_RestartBattle {
+    uint32 ret = 1;  // 返回码
+  repeated uint32 random_seeds = 2;  // 随机数种子序列
+}
+
+// 战斗是否已完成
+message C2S_IsBattleFinished {
+  uint64 battle_id = 1;  // 战斗ID
+}
+
+// 战斗是否已完成响应
+message S2C_IsBattleFinished {
+    uint32 ret = 1;  // 返回码
+  bool finished = 2;  // 是否已完成
+}

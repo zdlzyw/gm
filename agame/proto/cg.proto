@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package cg;
+option go_package = "common/out/cg;cg";
+
+enum RET {
+    RET_ERROR = 0;
+    RET_OK = 1;
+    RET_SERVER_MAINTAIN = 2;
+    RET_USER_NOT_EXIST = 3;
+    RET_USER_NAME_REPEAT = 4;
+    RET_LOGIN_REPEAT = 5;
+    RET_LOGIC_CLEAR = 6;
+  RET_USER_NAME_ILLEGAL = 7;  // 非法名字
+}
+
+enum ID {
+  MSG_NONE = 0;
+
+  MSG_BEGIN = 10000;
+    MSG_END = 99999;
+
+    MSG_C2G_Login = 10002;
+    MSG_G2C_Login = 10003;
+    MSG_C2G_Create = 10004;
+    MSG_G2C_Create = 10005;
+  MSG_C2G_KeepAlive = 10006;
+  MSG_G2C_KeepAlive = 10007;
+    MSG_C2G_SayHi = 10008;
+    MSG_G2C_SayHi = 10009;
+    MSG_C2G_Offline = 10010;
+    MSG_G2C_Offline = 10011;
+  MSG_G2C_Broadcast = 10012;
+    MSG_C2G_Activate = 10013;
+    MSG_G2C_Activate = 10014;
+    MSG_C2G_PingPong = 10015;
+    MSG_G2C_PingPong = 10016;
+}
+
+// 登录请求
+message C2G_Login {
+    uint64 sid = 1;  // 服务器ID
+  string gateway_ip = 2;  // 网关IP
+    bytes info = 3;  // 透传数据: out_base.LoginInfo
+}
+
+// 登录响应
+message G2C_Login {
+  uint32 ret = 1;  // 返回值
+  uint64 uid = 2;  // 玩家ID
+  uint64 sid = 3;  // 服务器ID
+  bytes info = 4;  // 透传数据:out_base.LoginResult
+}
+
+// 创建角色请求
+message C2G_Create {
+  uint64 sid = 1;  // 服务器ID
+  bytes info = 2;  // 透传数据:out_base.CreateInfo
+}
+
+// 创建角色响应
+message G2C_Create {
+  uint32 ret = 1;  // 返回值
+  uint64 uid = 2;  // 玩家ID
+  uint64 sid = 3;  // 服务器ID
+  bytes info = 4;  // 透传数据:预留
+}
+
+// 服务器注册
+message C2G_SayHi {
+}
+
+// 服务器注册回包
+message G2C_SayHi {
+    uint64 id = 1;
+  repeated uint64 current = 2;
+    repeated uint64 del = 3;
+}
+
+// 客户端心跳
+message C2G_KeepAlive {
+}
+
+message G2C_KeepAlive {
+}
+
+// 客户端断线
+message C2G_Offline {
+}
+
+// 服务器踢线
+message G2C_Offline {
+  uint32 reason = 1;  // 踢线原因
+}
+
+// 广播消息
+message G2C_Broadcast {
+  repeated uint64 ids = 1;
+    uint32 cmd = 2;  // 广播消息ID
+    repeated uint64 sid = 3;  // 服务器ID
+    bytes info = 4;  // 透传数据:根据 cmd 找到对应消息
+}
+
+// 激活请求
+message C2G_Activate {
+  uint64 sid = 1;  // 服务器ID
+  bytes info = 2;  // 透传数据:保留
+}
+
+// 激活响应
+message G2C_Activate {
+  uint32 ret = 1;  // 返回值
+  bytes info = 2;  // 透传数据:保留
+}
+
+// pingpong(test)
+message C2G_PingPong {
+  bytes ping = 1;
+}
+
+message G2C_PingPong {
+  bytes pong = 1;
+}

@@ -1,0 +1,1671 @@
+syntax = "proto3";
+
+package out_base;
+
+import "base.proto";
+
+option go_package = "common/out/out_base;out_base";
+
+message User {
+    uint64 id = 1;   // 玩家Id
+    string name = 2;   // 玩家姓名
+    uint32 create_time = 3;   // 创角时间
+    uint32 level = 4;   // 玩家等级
+    int64 buy_diamond = 5;   // 购买钻石(会有负数)
+    uint64 free_diamond = 6;   // 免费钻石
+    uint32 vip_level = 7;   // vip等级
+    uint64 fight_value = 8;   // 战力
+    uint32 base_id = 9;   // 主角baseid
+    uint32 show_id = 10;  // 显示uid
+    uint32 avatar_id = 11;  // 头像ID
+    uint32 frame_id = 12;  // 头像框ID
+    int64 coin = 13;  // 银币
+    uint32 name_style_id = 14;  // 姓名样式ID
+    uint32 skill_tree_level = 15;  // 技能树等级
+  map<uint32, bool> formation_dirty = 16;  // 阵容是否变化 key-阵容ID
+    uint32 history_best_quality = 17;  // 历史最好品质
+    uint32 modify_name_cnt = 18;  // 改名次数
+    uint32 follow_award_cnt = 19;  // 关注奖励领取次数
+    uint64 max_fight_value = 20;  // 历史最高战力
+    uint64 money = 21;  // 充值总金额
+    uint32 login_days = 22;  // 登陆天数
+    int64 last_offline_time = 23;  // 最后离线时间
+}
+
+// 服务器信息
+message ServerInfo {
+    int64 open_time = 1;  // 开服时间
+    uint64 sid = 2;  // 服务器ID
+    string server_name = 3;  // 服务器名
+    string merge_name = 4;  // 合服名
+    bool is_merge = 5;  // 是否合服
+}
+
+message InitTimeInfo {
+  uint32 type = 1;  // 时间类型
+    int64 time = 2;  // 时间戳
+}
+
+// 操作道具
+message OpItem {
+  repeated Item insert = 1;  // 新增
+  repeated Item update = 2;  // 更新
+    repeated uint64 del = 3;  // 删除
+}
+
+// 操作资源
+message OpResource {
+  repeated Resource insert = 1;  // 新增
+  repeated Resource update = 2;  // 更新
+    repeated uint64 del = 3;  // 删除
+}
+
+// 键值对操作
+message OpKV {
+  repeated base.KV insert = 1;
+  repeated base.KV update = 2;
+    repeated uint64 del = 3;
+}
+
+// 道具
+message Item {
+    uint64 id = 1;  // 道具ID
+    uint64 num = 2;  // 道具数量
+  int64 expire_time = 3;  // 过期时间戳（0表示永不过期）
+}
+
+// 资源
+message Resource {
+    uint64 id = 1;  // 资源ID
+    uint64 num = 2;  // 数量
+    uint32 time = 3;  // 按时间增长结束时间
+  int64 refresh_time = 4;  // 资源更新时间
+}
+
+// 激活信息
+message ActivateInfo {
+  string token = 1;  // 登录Token
+    string code = 2;  // 激活码
+}
+
+// 登录信息
+message LoginInfo {
+    string token = 1;  // 登录token
+    uint32 version = 2;  // 版本
+    uint64 sequence_id = 3;  // 收到的最后一条服务器消息序号 传0表示非重连
+    base.Client client = 4;  // 客户端信息
+    uint32 uuid_reg_time = 5;  // 平台注册时间
+    uint32 pure_login_time = 6;  // 最后非重连的登陆时间，该时间由非重连登陆时服务器返回
+  uint32 client_language_id = 7;  // 客户端设置-语言
+}
+
+// 登录结果
+message LoginResult {
+    uint32 time = 1;  // 服务器时间戳
+    int32 zone = 2;  // 时区
+    bool auto_flush = 3;  // 是否需要踢到登录界面
+    string git_version = 4;  // 服务器版本
+    bool need_activate = 5;
+  uint32 pure_login_time = 6;  // 非重连的登陆时间
+}
+
+// 创建角色信息
+message CreateInfo {
+    string name = 1;  // 角色名
+  uint32 base_id = 2;  // 角色baseid
+}
+
+// 红点规则
+// 红点逻辑主要由客户端计算
+// 客户端在进主界面时，除了关联性很强的info协议（例如主线副本），其他尽量把需要做红点的内容做到红点协议中
+// 服务器设计红点结构体时，如果碰到repeated对象需要传递，需要跟客户端对一下逻辑，这时候需要写一点小逻辑，减少发送内容
+// eg.客户端进叛军界面时候会拉所有叛军信息，但是在主界面的红点只需要知道自己主线触发的叛军数量是多少
+// 这时候服务器就不要传所有叛军过去，而直接告诉客户端这个数量是多少把 repeated OBJ => uint32,至于具体逻辑客户端会在进界面时候拉完做逻辑的
+message RedPoint {
+  // 各自模块用一个message结构体包含
+    uint32 arena_latest_defend_record_id = 1;   // 竞技场最新的防守记录 id
+    TowerRedPoint tower = 2;   // 爬塔红点
+    RogueRedPoint rogue = 3;   // 迷宫红点
+    TerritoryRedPoint territory = 4;   // 领地红点
+    uint32 un_read_mail_count = 5;   // 未读邮件数量
+    uint32 treasury_id = 6;   // 宝库通关最高id
+    SecretRedPoint secret = 7;   // 神兽秘境红点
+    int64 peak_arena_latest_defend_record_id = 8;   // 巅峰竞技场最新的防守记录 id(本质上就是时间戳)
+    GuildWeeklyQuestInfo guild_weekly_quest = 9;   // 公会周常任务
+    TerritoryLordRedPoint territory_lord = 10;  // 领地领主
+  FestivalActivityRedPoint festival_activity = 11;  // 节庆活动
+    SlgRedPoint slg = 12;  // 永恒竞技场
+    map<uint32, WishPoolRedPoint> wish_pools = 13;  // 钓鱼换皮活动（钓鱼、老虎机、弹弹乐）
+    GuildRedPacketRedPoint guild_red_packet = 14;  // 公会红包
+    CirculateActRedPoint circulate_act = 16;  // 循环活动
+    GachaRedPoint gacha = 17;  // 一番赏
+    PersonalCompRedPoint personal_comp = 18;  // 个人竞赛
+    CrossTeamRedPoint cross_team = 19;  // 跨服组队
+    GuildMergeRequestRedPoint guild_merge = 20;  // 公会合并请求红点(会长才有)
+    MergeServerInfo merge_server_info = 21;  // 合服红点信息
+    UserVipRedPoint vip = 22;  // VIP功能红点
+    RecommendTeamRedPoint recommend_team = 23;  // 推荐阵容红点
+}
+
+message RecommendTeamRedPoint {
+    bool is_award = 1;  // 是否领奖
+}
+
+message MergeServerInfo {
+    int64 last_merge_time = 1;  // 上次合服时间
+    int64 merge_award_time = 2;  // 合服奖励领取时间
+}
+
+message GuildMergeRequestRedPoint {
+    uint32 receive_request_count = 1;  // 收到的请求数量
+    uint32 send_request_count = 2;  // 发送的请求数量
+}
+
+message TowerRedPoint {
+  repeated uint32 obtained_ids = 1;  // 领取关卡记录
+    uint32 max_pass_id = 2;  // 最大通关 id
+    uint32 id = 3;  // 当前关卡id
+    uint32 first_pass_max_id = 4;  // 首通记录最大层数
+}
+
+message RogueFirstPassRedPoint {
+    repeated uint64 award_ids = 1;  // 领取记录
+  map<uint32, uint64> max_pass_ids = 2;  // 最大通关记录
+}
+
+message TowerRedPointUpdateInfo {
+  uint32 max_pass_id = 1;  // 当前功能最大通关 id
+}
+
+message RogueRedPointUpdateInfo {
+  map<uint32, uint64> max_pass_ids = 1;  // 最大通关记录
+}
+
+message TerritoryRedPoint {
+  repeated TerritoryBuilding buildings = 1;  // 建筑红点数据
+    TerritoryMainCity main_city = 2;  // 主城 id
+    int64 log_latest_time = 3;  // 好友访问日志最新时间戳
+    bool already_enter = 4;  // 是否已经进入过领地
+}
+
+message SlgRedPoint {
+    base.DynamicActivityInfo slg_activity = 1;  // 永恒竞技场活动
+    bool is_slg_new = 2;  // 是否是新赛季
+    bool obtain_preheat_reward = 3;  // 是否领取预热奖励
+    bool obtain_show_reward = 4;  // 是否领取展示奖励
+  repeated uint32 obtained_quest_reward_ids = 5;  // 已经领取任务奖励的 id 列表,目前主要用于s2赛季的成就任务
+    uint32 copy_slg_base_id = 6;  // 复制品BaseId 0代表没有复制品
+}
+
+message SlgCrossRedPoint {
+    out_base.SlgMainCity main_city = 1;   // 主堡
+  repeated out_base.SlgBarrack barracks = 2;   // 兵营
+    base.SlgSupply supply = 3;   // 补给站
+    int64 city_start_tm = 4;   // 攻城开始时间
+    int64 city_end_tm = 5;   // 攻城结束时间
+    bool city_gather = 6;   // 是否攻城集结
+    bool battle_un_award = 7;   // 是否有战斗未领奖
+    map<uint32, uint32> checkpoint_quest = 8;   // 关隘任务
+    uint32 occupied_city = 9;   // 占领城池
+    SlgBattlePassRedPoint battle_pass = 10;  // 战令红点数据
+    uint32 challenged_boss_level = 11;  // 已挑战过的boss等级
+    int64 enter_time = 12;  // 进入玩家时间
+    SlgCityQuest city_quest = 13;  // 攻城任务
+    base.Point point = 14;  // 玩家坐标
+}
+
+message CrossTeamRedPoint {
+    base.DynamicActivityInfo activity = 1;  // 活动信息
+    repeated uint64 sids = 2;  // 匹配的服务器信息
+}
+
+message CirculateActRedPoint {
+  repeated CirculateAct circulate_acts = 1;
+}
+
+message PersonalCompRedPoint {
+  repeated PersonalComp comps = 1;
+}
+
+// 活动时间
+message TimeInfo {
+    uint64 start_time = 1;
+    uint64 end_time = 2;
+  uint64 reward_time = 3;
+}
+
+// 通用事件进度
+message EventRecord {
+    uint32 id = 1;  //
+  repeated base.TVS records = 2;
+}
+
+// 操作资源
+message OpCharacter {
+  repeated base.Character insert = 1;  // 新增
+  repeated base.Character update = 2;  // 更新
+    repeated uint64 del = 3;  // 删除
+}
+
+// 预设编队
+message FormationTeam {
+    uint32 id = 1;
+    string name = 2;
+  base.Formation formation = 3;
+}
+
+// 佣兵阵位
+message CharacterFormationSlot {
+    uint32 slot = 1;  // 阵位
+  uint32 level = 2;  // 角色等级
+}
+
+// 操作阵位
+message OpCharacterFormationSlot {
+  map<uint32, CharacterFormationSlot> upsert = 1;  // 新增&更新佣兵阵位
+    repeated uint32 del = 2;  // 删除
+}
+
+// 操作装备
+message OpEquipment {
+  repeated base.EquipmentData insert = 1;  // 新增装备
+    repeated uint64 del = 2;  // 删除
+  // repeated uint32 icons = 3;                // 新增装备 icon
+}
+
+message CompanionEquipment {
+    uint64 id = 1;  // 装备ID
+    uint32 base_id = 2;  // 装备配置ID
+    uint32 level = 3;  // 装备等级
+  repeated base.Attr init_attrs = 4;  // 装备初始属性
+    uint32 profession = 5;  // 加成职业
+    bool lock = 6;  // 是否锁定
+    uint32 enhance_level = 7;  // 强化等级
+}
+
+// 操作装备
+message OpCompanionEquipment {
+  map<uint64, CompanionEquipment> upsert = 1;  // 新增&更新装备
+    repeated uint64 del = 2;  // 删除
+}
+
+message CompanionEquipmentFormation {
+    uint32 slot = 1;  // 对应佣兵阵位（当前版本只能取2和3）
+  repeated CompanionEquipmentFormationPosition positions = 2;  // 佣兵装备槽位
+}
+
+message CompanionEquipmentFormationPosition {
+  uint64 equip_id = 1;  // 佣兵装备ID
+    uint32 level = 2;  // 佣兵装备等级
+}
+
+message OpCompanionEquipmentFormation {
+  map<uint32, CompanionEquipmentFormation> upsert = 1;  // 新增&更新
+}
+
+message CompanionEquipmentCombineGroup {
+    uint32 type = 1;  // 装备类型
+    uint32 quality = 2;  // 装备品质
+    repeated uint64 equip_ids = 3;  // 合成装备ID（默认2个装备，0为主装备，1为材料装备）
+    uint32 result = 4;  // 合成结果（1:突破成功/2:强化成功/3:失败）
+  repeated base.Award awards = 5;  // 返还材料
+}
+
+// 通用任务
+message CommonQuest {
+  uint32 reset_type = 1;  // 重置类型
+    uint32 type = 2;  // 任务类型（quest_collection_info.id）
+    uint64 value = 3;  // 任务条件（quest_collection_info.note_value_2）
+    uint64 size = 4;  // 任务进度
+    int64 reset_time = 5;  // 重置时间
+}
+
+message CommonQuestMap {
+  map<uint64, CommonQuest> quests = 1;  // 任务数据（key:任务条件）
+}
+
+message CommonQuestTypeMap {
+  map<uint32, CommonQuestMap> quests = 1;  // 任务数据（key:任务类型）
+}
+
+message OpQuestNotify {
+    bool all = 1;
+    bool score_shop = 2;   // 是否输出积分商店解锁条件的行为类计数
+    bool arena = 3;   // 竞技场任务数据
+    bool guild = 4;   // 公会任务数据
+    bool daily = 5;   // 日常
+    bool weekly = 6;   // 周常
+    bool battle_pass = 7;   // 开服战令
+    bool seven_act = 8;   // 七日活动
+    bool guild_share = 9;   // 所有玩家共享的公会任务数据
+    bool honor = 10;  // 头衔
+  bool theme_activity = 11;  // 主题活动
+}
+
+// 主线任务
+message QuestMain {
+    uint32 id = 1;  // 进行中的任务id 0表示当前没有进行中的任务
+  uint64 progress = 2;  // 任务进度 仅接受任务开始计算的进度，其他类型从通用数据中自行获取
+    uint32 state = 3;  // 任务状态 0: 未完成 1: 已完成
+}
+
+// 技能树
+message SkillTree {
+    uint32 level = 1;  // 当前技能树等级
+  map<uint32, uint32> activate_ids = 2;  // 已激活技能树ID->选项(1/2)
+}
+
+message GuideRecord {
+  uint32 type = 1;
+    uint32 id = 2;
+}
+
+message Mail {
+    uint64 id = 1;  // 邮件ID
+    uint32 base_id = 2;  // 邮件配置ID
+  map<string, string> params = 3;  // 动态参数
+  repeated base.Award awards = 4;  // 奖励附件
+    uint32 send_time = 5;  // 发奖时间
+    uint32 expire_time = 6;  // 过期时间
+    uint32 status = 7;  // 邮件状态（1:未读/2:已读或已领奖）
+}
+
+// 竞技场玩家基础信息
+message UserArenaOpponentBase {
+  base.SimpleUser base = 1;
+    uint32 score = 2;  // 竞技场积分
+    uint32 win_score = 3;  // 挑战胜利可能得到的积分
+}
+
+message UserArenaRankData {
+  base.SimpleUser base = 1;  // 基础信息
+    uint32 score = 2;  // 积分
+    uint32 like = 3;  // 点赞数目
+    uint32 rank = 4;  // 排名信息
+}
+
+message UserArenaData {
+  repeated UserArenaOpponentBase match_opponents = 1;  // 匹配到的玩家(包含机器人)
+    uint32 use_free_match = 2;  // 使用免费匹配次数(免费刷新次数)
+    int64 latest_match_time = 3;  // 最近使用匹配的时间点(用于计算 cd 时间)
+    repeated uint64 like_uids = 4;  // 当日点赞列表
+    repeated uint32 obtain_awards = 5;  // 任务领奖记录
+    uint32 score = 6;  // 需要显示的积分
+    uint32 rank = 7;  // 自己排名
+    bool manual_defend_formation = 8;  // 防守阵容是否手动布阵
+    uint32 max_rank = 9;  // 最高排名
+}
+
+message UserArenaBattleRecord {
+    uint32 id = 1;  // 报文唯一 id
+    bool is_win = 2;  // 胜利或者失败
+    uint32 score = 3;  // 变化积分
+  base.SimpleUser base = 4;  // 对方基础信息
+    int64 timestamp = 5;  // 战斗间戳
+    bool revenge = 6;  // 是否复仇成功
+    string record_name = 7;  // 战斗录像名
+}
+
+message CharacterCompanionUpgradeQuality {
+    uint64 character_id = 1;  // 角色唯一id(不能为主角id)
+  repeated uint64 cost_character_ids = 2;  // 升星消耗的角色 id
+}
+
+// 战报记录数据结构
+message BattleRecord {
+  base.BattleReport report = 1;  // 战报
+  base.BattleResult result = 2;  // 战斗结果
+}
+
+message UserDetail {
+    base.SimpleUser base = 1;   // 玩家基础信息
+    repeated base.Character character = 2;   // 主阵容上阵佣兵信息
+    base.Formation formation = 3;   // 主阵容上阵信息（佣兵、背饰、神器、战宠）
+    repeated base.UserEquipment equipment = 4;   // 装备信息
+    repeated base.ArtifactData equip_artifacts = 5;   // 主阵容上阵神器信息
+    base.Back back = 6;   // 主阵容上阵背饰信息
+    map<uint32, out_base.SimplePet> pets = 7;   // 主阵容上阵战宠信息(阵位id:1-出战位 2-助战位)
+    repeated out_base.CharacterFormationSlot character_slots = 8;   // 佣兵阵位养成
+    base.SimpleGuild simple_guild = 9;   // 公会信息
+    GemBoardDetail gem_board = 10;  // 宝石棋盘信息
+}
+
+// 玩家卡池信息
+message RecruitData {
+    uint32 id = 1;  // 卡池ID
+    uint32 free_num_cd = 2;  // 免费次数倒计时
+    uint32 total_num = 3;  // 总抽取次数
+    uint32 daily_num = 4;  // 今日抽取次数
+    uint32 award_extra_num = 5;  // 额外奖励领取次数
+    uint32 tp = 6;  // 卡池类型
+    int64 st = 7;  // 开始时间
+    int64 et = 8;  // 结束时间
+    bool is_open_server_activity = 9;  // 是否开服活动
+}
+
+// 玩家充值信息
+message RechargeData {
+    uint32 id = 1;  // 充值ID
+    uint32 num = 2;  // 充值次数
+  uint32 last_recharge_tm = 3;  // 最后一次的充值时间戳
+    uint32 daily_num = 4;  // 今日充值次数
+    uint32 level = 5;  // 充值等级
+    uint32 level_change_tm = 6;  // 充值等级变化时间
+}
+
+message RechargeParams {
+    string uid = 1;   // 登录接口返回osdk_ticket中的 user_id（不带前缀的值）
+    string amount = 2;   // 游戏服务端根据客户端传入的product_id找到游戏内商品表对应的金额
+    string currency = 3;   // 游戏服务端根据客户端传入的product_id找到游戏内商品表对应的货币单位
+    string server_id = 4;   // 下单服务器id，游戏服务端从服务端获取，和客户端下单时的服务器id保持一致
+    string product_id = 5;   // 下单时的商品id，客户端传给游戏服务端
+    string product_name = 6;   // 下单时的商品名称，游戏服务端从服务端获取，和客户端下单时的商品名称保持一致
+    string role_id = 7;   // 下单时用户角色id，游戏服务端从服务端获取，和客户端下单时的角色id保持一致
+    string game_req_time = 8;   // 游戏服务器秒级别的时间戳，游戏服务端时间到 h5服务器时间不能超过60s,超过则认为请求过期
+    string game_unique_code = 9;   // 游戏服务端生成的唯一字符串，最长50个字符，会校验1分钟内的唯一性
+    string game_sign = 10;  // 游戏服务端生成的签名
+}
+
+// 玩家地牢数据
+message InfiniteDungeonData {
+    uint32 id = 1;  // 地牢ID
+    uint32 passed_stage_id = 2;  // 已通关卡ID
+  uint32 awarded_stage_id = 3;  // 已领取阶段奖励的关卡ID
+}
+
+message InfiniteDungeonHangUp {
+  repeated uint64 award_size = 1;  // 剩余收益数量
+    int64 start_tm = 2;  // 挂机开始时间戳
+    int64 latest_start_tm = 3;  // 最近的关卡挂机开始时间戳
+}
+
+message UserFriend {
+  base.SimpleUser user = 1;
+}
+
+message UserFriendApply {
+    uint64 uid = 1;
+  int64 timestamp = 2;  // 申请时的时间记录
+}
+
+message UserFriendAck {
+    uint64 uid = 1;
+  int64 timestamp = 2;
+}
+
+message UserFriendRecvGift {
+    uint64 uid = 1;
+  uint32 state = 2;  // 领奖状态
+}
+
+message UserFriendSystem {
+    repeated uint64 friends = 1;  // 好友信息
+    repeated uint64 blacks = 2;  // 黑名单信息
+    repeated UserFriendApply applys = 3;  // 申请添加好友记录
+    repeated UserFriendAck acks = 4;  // 等待确认的申请记录
+    repeated uint64 give_gifts = 5;  // 赠送礼物记录
+  repeated UserFriendRecvGift recv_gifts = 6;  // 接收礼物记录
+    uint32 recv_gift_cnt = 7;  // 今日接收礼物次数
+}
+
+message RankUnit {
+    uint32 rank = 1;  // 排名
+    uint64 unit_id = 2;  // 单位ID
+    uint64 first = 3;  // 第一排序值
+    uint64 second = 4;  // 第二排序值
+    uint64 third = 5;  // 第三排序值
+  base.RankUnitExtra extra = 6;  // 扩展信息
+    base.UserSnapshot user = 7;  // 玩家快照
+    base.SimpleGuild guild = 8;  // 公会快照
+}
+
+message Chat {
+    uint32 chat_type = 1;  // 聊天类型由客户端定义,服务器查看 ntype/chat.go 里面的聊天类型枚举
+    uint64 target_id = 2;  // 聊天目标id
+    bytes content = 3;  // 聊天内容
+  bytes extra_param = 4;  // 透传参数，服务端不做敏感词检查，参数内容不能直接用做显示使用，有展示需要的，都需要放到content中，做敏感词检查
+}
+
+message UserChat {
+    bool private_forbid = 1;  // 是否禁止聊天
+  map<uint32, int64> latest_read_tms = 3;  // 最后一次阅读时间(key:频道id,value:时间戳)(纳秒)
+    map<uint32, uint32> unread_num = 4;  // 未读聊天数量(key:频道id,value:未读消息数)
+}
+
+// 通用战斗记录结构，用于主线/地牢
+message CommonFightRecordList {
+  repeated CommonFightRecord records = 1;
+}
+
+message CommonFightRecord {
+    base.UserSnapshot user = 1;  // 玩家基础信息
+    string fight_record = 2;  // 战斗记录路径
+  repeated base.Character character = 3;  // 玩家角色信息
+}
+
+// 神器OP操作
+message OpArtifact {
+  repeated base.ArtifactData insert = 1;  // 新增神器
+    repeated uint32 del = 2;  // 删除
+}
+
+message RogueRedPoint {
+    map<uint32, uint32> diffs = 1;  // 历史最大难度
+    repeated uint32 trees = 2;  // 科技树
+    bool has_book_award = 3;  // 图鉴奖励未领取
+    repeated uint64 task_awards = 4;  // 已领取周任务奖励（周重置）
+  RogueFirstPassRedPoint first_pass = 5;  // 首通红点
+    int64 last_first_pass = 6;  // 上次首通周期0点时间
+}
+
+// 玩家迷宫数据
+message Rogue {
+    map<uint32, uint32> diffs = 1;  // 历史最大难度
+    repeated uint32 trees = 2;  // 科技树
+    repeated base.TVS32 books = 3;  // 图鉴（type:4-事件/9-遗物/10-消耗品,value:事件ID/遗物AdvanceId/消耗品AdvanceId,size:1-已获取/2-已领奖）
+    repeated uint64 task_awards = 4;  // 已领取周任务奖励（周重置）
+    RogueInner inner = 5;  // 迷宫局内信息
+  repeated uint64 first_awards = 6;  // 首通领奖标记
+    int64 last_first_pass = 7;  // 上次首通周期0点时间
+}
+
+// 迷宫局内信息
+message RogueInner {
+    uint32 id = 1;   // 迷宫ID
+    RogueMap map = 2;   // 迷宫地图
+    uint32 level = 3;   // 队伍等级
+    map<uint64, base.AttrInherit> characters = 4;   // 佣兵属性继承
+    uint32 fail_count = 5;   // 失败次数
+    map<uint32, uint32> relics = 6;   // 遗物
+    map<uint32, uint32> items = 7;   // 消耗品
+    RogueRecruit recruit = 8;   // 招募
+    map<uint32, RogueTempAward> temp_awards = 9;   // 可领奖励（1:战斗/2:事件/3:温泉/4:机制/5:进入）
+    RogueShop shop = 10;  // 商店
+    repeated base.Award box = 11;  // 宝箱掉落奖励
+    RogueChallengeResult challenge_result = 12;  // 挑战结果
+    RogueEvent event = 13;  // 当前格子触发事件
+    uint32 max_layer = 14;  // 最大层数
+    repeated uint32 used_devices = 15;  // 已使用装置
+  map<uint32, RoguePrivilegeList> privileges = 16;  // 特权
+    repeated uint32 battle_buffs = 17;  // 战斗buff
+    RogueMonsterInfo monster_info = 18;  // 怪物信息
+}
+
+// 迷宫地图
+message RogueMap {
+    uint32 layer = 1;  // 层数
+    uint32 first_grid = 2;  // 首关格子ID
+    uint32 current_grid = 3;  // 当前格子ID
+  map<uint32, RogueGrid> grids = 4;  // 格子信息
+    uint32 status = 5;  // 地图状态（0:未通过/1:已通过）
+    uint32 back_ground = 6;  // 背景
+}
+
+// 迷宫格子
+message RogueGrid {
+    uint32 grid_id = 1;  // 格子ID
+    uint32 stage_id = 2;  // 关卡ID
+    uint32 grid_type = 3;  // 格子类型
+    uint32 grid_value = 4;  // 格子值（未进入状态为0）
+    uint32 status = 5;  // 格子状态（0:未进入/1:进入/2:通过/4:瞬移至boss关）
+    repeated uint32 pre_grids = 6;  // 前置格子
+  repeated uint32 next_grids = 7;  // 后置格子
+    uint32 real_type = 8;  // 真实格子类型
+    uint32 real_value = 9;  // 真实格子值
+}
+
+// 迷宫招募
+message RogueRecruit {
+    uint32 count = 1;  // 招募次数
+    repeated uint32 wishes = 2;  // 心愿单
+  repeated base.Award characters = 3;  // 抽取的佣兵
+}
+
+// 迷宫事件
+message RogueEvent {
+    uint32 id = 1;  // 事件ID
+  uint32 option = 2;  // 事件选项
+}
+
+// 迷宫商店
+message RogueShop {
+    uint32 shop_id = 1;  // 商店ID
+    uint32 refresh_time = 2;  // 商品刷新时间
+    uint32 auto_count = 3;  // 自动补货次数
+  repeated RogueShopGoods goods_list = 4;  // 商品列表
+}
+
+// 迷宫商店商品
+message RogueShopGoods {
+    uint32 id = 1;  // 商品唯一ID
+    uint32 base_id = 2;  // 商品配置ID
+  uint32 shop_base_id = 3;  // 商店配置ID（商店显示使用）
+    uint32 status = 4;  // 商品状态(1:可购买/2:已售罄)
+}
+
+// 迷宫战斗结果
+message RogueChallengeResult {
+    uint32 level = 1;  // 挑战前队伍等级
+    base.BattleResult result = 2;  // 战斗结果
+  map<uint64, base.AttrInherit> characters = 3;  // 挑战后佣兵血量数据
+}
+
+// 迷宫怪物信息
+message RogueMonsterInfo {
+    uint32 monster_team_id = 1;  // 怪物队伍ID
+  repeated uint32 skill_set_ids = 2;  // 技能组ID
+    uint64 monster_fight = 3;  // 怪物战力
+}
+
+// 迷宫临时奖励
+message RogueTempAward {
+  map<uint32, base.Award> awards = 1;  // 奖励
+}
+
+// 迷宫特权
+message RoguePrivilege {
+    uint32 type = 1;
+  uint32 value1 = 2;
+  uint32 value2 = 3;
+  uint32 value3 = 4;
+  uint32 value4 = 5;
+    uint32 size = 6;
+}
+
+message RoguePrivilegeList {
+  repeated RoguePrivilege privileges = 1;
+}
+
+message CommonFirstRecord {
+    uint32 id = 1;  // 关卡ID
+    uint64 uid = 2;  // 首次通关层数
+    uint32 time = 3;  // 首次通关时间
+  base.SimpleUser user = 4;  // 首次通关玩家信息
+}
+
+message GuildMergeIntention {
+    base.SimpleGuild guild = 1;
+    base.GuildMergeSetting setting = 2;
+    base.SimpleUser user = 3;  // 会长信息
+}
+
+message GuildMergeRequest {
+    base.GuildMergeRequest request = 1;
+    base.SimpleGuild target_guild = 2;
+}
+
+// 0.4.0-公会
+message UserGuild {
+    Guild guild = 1;   // 公会信息
+    uint32 daily_sign_cnt = 2;   // 玩家在公会每日签到次数
+    int64 daily_last_reset_time = 3;   // 上次重置时间
+    int64 probationary_start_time = 4;   // 见习期开始时间
+    uint32 daily_assign_cnt = 5;   // 协助其它玩家的次数
+    repeated uint64 assisted_uids = 6;   // 协助玩家列表id
+    bool is_req_assist_today = 7;   // 本日是否发起过协助
+    UserGuildGVE gve = 8;   // gve
+    uint64 first_create_guild_id = 9;   // 首次创建公会id
+  repeated uint32 obtain_title_appoint_id = 10;  // 领取职位奖励记录
+    repeated uint32 daily_sign_award_ids = 11;  // 每日签到奖励id
+    map<uint64, int64> apply_guilds = 12;  // 申请公会列表
+    GuildMergeRequestRedPoint guild_merge = 13;  // 公会合并请求红点(会长才有)
+}
+
+message Guild {
+    uint64 id = 1;   // 公会 id
+    base.GuildBase base = 2;   // 公会基础信息
+    map<uint64, uint64> resources = 3;   // 公会资源
+    map<uint64, GuildMember> members = 4;   // 公会成员
+  base.GuildJoinCondition join_condition = 5;   // 公会加入条件
+    repeated uint32 icons = 6;   // 公会图标
+    repeated GuildApplyUser apply_users = 7;   // 申请玩家列表
+    repeated GuildEventLog logs = 8;   // 公会日志
+    GuildTech tech = 9;   // 公会科技
+    repeated GuildSignRecord sign_records = 10;  // 玩家签到记录
+    uint32 member_capacity = 11;  // 公会可以容纳玩家成员总数
+    GuildGVESimple gve = 12;  // gve
+}
+
+message GuildMember {
+    base.SimpleUser user = 1;
+    uint32 title_id = 2;
+    int64 join_time = 3;
+    uint64 weekly_supplies = 4;   // 玩家周物资
+    uint64 weekly_contributes = 5;   // 玩家周贡献
+    uint64 history_contributes = 6;   // 玩家历史贡献
+  repeated uint64 assist_uids = 7;   // 其它玩家协助我的列表
+    int64 assist_time = 8;   // 协助时间
+    uint32 gve_receive_num = 9;   // gve受赠次数
+    uint64 gve_supplies = 10;  // gve物资
+    uint32 treasure_box_level = 11;  // 宝箱等级
+}
+
+message GuildApplyUser {
+  base.SimpleUser user = 1;
+    int64 apply_time = 2;
+}
+
+message GuildEventLog {
+    uint32 id = 1;  // 日志 id
+    int64 time_nano = 2;  // 单位是纳秒
+  repeated GuildEventLogUser users_args = 3;  // 玩家参数列表
+    repeated string log_args = 4;  // 日志参数
+}
+
+message GuildEventLogUser {
+    uint64 uid = 1;  // 玩家 id
+  string name = 2;  // 玩家名
+}
+
+message GuildTech {
+  map<uint32, uint32> tech = 1;  // 养成的科技节点
+    uint32 upgrade_tech = 2;  // 处于升级中的科技节点
+    int64 upgrade_time = 3;  // 正在升级的时间戳
+}
+
+message GuildSignRecord {
+    string name = 1;
+  uint32 point = 2;
+}
+
+message UserGuildAssist {
+    base.SimpleUser user = 1;  // 请求协助玩家基础信息
+    uint32 treasure_box_level = 2;  // 宝箱等级
+    int64 req_assign_time = 3;  // 请求协助时间戳
+  repeated uint64 assisted_uids = 4;  // 协助玩家列表id
+}
+
+message GuildGVE {
+    uint32 lv = 1;   // 副本等级 0-玩法未开启
+    uint32 tp = 2;   // 副本阶段
+    map<uint32, uint32> monsters = 3;   // 对怪物造成的伤害 key-stage_id value-伤害
+  map<uint32, GuildGVEReward> box = 4;   // 宝库 key-副本阶段 value-奖励
+    int64 addition_start_tm = 5;   // 加成开始时间
+    int64 addition_end_tm = 6;   // 加成结束时间
+    uint32 daily_addition_num = 7;   // 今日加成次数
+    uint32 box_group_id = 8;   // 宝箱组id
+    uint32 turn = 9;   // 轮次
+    int64 start_tm = 10;  // 开始时间
+    int64 end_tm = 11;  // 结束时间
+}
+
+message GuildGVEReward {
+  map<uint32, GuildGVERewardItem> items = 1;  // key-奖励ID value-奖励
+}
+
+message GuildGVERewardItem {
+    uint32 id = 1;  // 奖励ID
+  repeated base.KV64 uids = 2;  // 领取的玩家 key-玩家ID value-领取位置 从0开始
+}
+
+message UserGuildGVE {
+    map<uint32, uint32> reward_num = 1;  // 今日奖励领取次数 key-奖励阶段 value-领取次数
+    uint32 receive_num = 2;  // 今日受赠次数
+    uint32 give_num = 3;  // 今日赠送次数
+  map<uint32, uint32> pass_difficult = 4;  // 通关难度 key-stage_id value-难度
+}
+
+message GuildGVEGiveLog {
+  int64 time_nano = 1;  // 单位是纳秒
+    uint64 uid = 2;
+    string name = 3;
+    bool is_friend = 4;  // 是否是好友
+    bool is_give = 5;  // true-赠送 false-受赠
+}
+
+// 简略信息，用于红点
+message GuildGVESimple {
+    uint32 lv = 1;  // 副本等级 0-玩法未开启
+    uint32 tp = 2;  // 副本阶段
+    uint32 turn = 3;  // 轮次
+  int64 addition_start_tm = 4;  // 加成开始时间
+    int64 addition_end_tm = 5;  // 加成结束时间
+}
+
+// 0.5.0-小游戏
+message UserCasualGame {
+  repeated CasualGameItem game_items = 1;  // 小游戏列表
+}
+
+message CasualGameItem {
+    uint32 id = 1;  // 小游戏id
+    int64 start_tm = 2;  // 开始时间戳
+  uint32 origin_id = 3;  // 原始小游戏id
+}
+
+// 翻牌数据
+message CasualGameCard {
+    uint32 result = 1;  // 翻到第X张牌 取值0 1 2
+  repeated base.Award awards = 2;  // 每张牌对应的奖励
+}
+
+// 红包雨数据
+message CasualGameCoinSpring {
+}
+
+// 转盘数据
+message CasualGameWheel {
+  repeated CasualGameWheelItem items = 1;  // 转盘列表
+    uint32 result = 2;  // 转到第X个盘 取值0 1 2...
+}
+
+message CasualGameWheelItem {
+  base.Award award = 1;  // 奖励
+    uint32 weight = 2;  // 权重
+}
+
+message CasualGameCoinSpringFinish {
+  map<uint32, uint32> normal = 1;  // 普通红包 key-第X种红包 从0开始 value-次数
+    uint32 special = 2;  // 特殊红包次数
+}
+
+// 0.5.0-割草
+message UserMow {
+    uint32 mow_id = 1;  // 割草玩法id
+  repeated uint32 targets = 2;
+}
+
+// 0.5.0-基金
+message UserFund {
+    uint32 fund_type = 1;  // 基金类型
+    bool pay = 2;  // 是否付费
+    repeated uint32 fund_id = 3;  // 付费已领取 id
+  repeated uint32 free_fund_id = 4;  // 免费已领取 id
+}
+
+// 0.5.0-月卡
+message MonthlyCard {
+    uint32 id = 1;  // 月卡id
+    int64 end_tm = 2;  // 结束时间戳
+  bool daily_awarded = 3;  // 今日是否领取
+}
+
+// 0.5.0-每日签到
+message UserDailySign {
+    uint32 sign_id = 1;  // 签到
+    uint32 obtain_id = 2;  // 领奖记录
+  int64 latest_sign_time = 3;  // 最近签到时间
+}
+
+// 0.5.0-推送礼包
+message PushGiftData {
+    uint32 group_id = 1;  // 推送礼包组 id
+  repeated uint32 buy_ids = 2;  // 购买礼包 id 列表
+    int64 trigger_time = 3;  // 触发推送礼包时间戳
+    uint64 uniq_id = 4;  // 唯一id
+    uint32 group_type = 5;  // 组类型
+}
+
+// 1.2.60-自选礼包
+message SelectGift {
+    uint32 group_id = 1;  // 礼包组 id
+  repeated uint32 buy_ids = 2;  // 购买礼包 id 列表
+    int64 trigger_time = 3;  // 触发礼包时间戳
+    uint64 unique_id = 4;  // 唯一id
+    uint32 group_type = 5;  // 组类型
+    uint32 duration = 6;  // 持续时长
+}
+
+// 0.6.0-七日签到
+message UserSevenSign {
+    uint32 activity_id = 1;  // 活动 id
+    uint32 sign_days = 2;  // 签到天数
+  repeated uint32 awarded_ids = 3;  // 已领取的奖励id
+}
+
+// 0.6.0-成就
+message AchievementInfo {
+    uint32 id = 1;  // 成就id
+    uint64 progress = 2;  // 进度
+    uint32 state = 3;  // 状态(enum.ACHIEVEMENT_STATE)
+  uint32 complete_time = 4;  // 达成时间戳
+}
+
+// 0.6.0-七日活动
+message UserSevenAct {
+    uint32 id = 1;  // 活动ID 0代表没有活动
+  repeated uint32 awarded_point = 2;  // 已领取的积分奖励
+  repeated uint32 awarded_quest = 3;  // 已领取的任务
+}
+
+message UserPrivilege {
+    uint32 id = 1;  // 特权id
+  repeated PrivilegeValue value = 2;  // 特权值列表
+}
+
+message PrivilegeValue {
+    uint64 value = 1;  // 特权值
+  int64 timestamp = 2;  // 过期时间戳
+    uint32 module = 3;  // 特权模块
+    uint32 sub_id = 4;  // 子id
+}
+
+message OpBack {
+  repeated base.Back insert = 1;  // 新增
+  repeated base.Back update = 2;  // 更新
+    repeated uint64 del = 3;  // 删除
+}
+
+message UserBack {
+    uint32 wish_num = 2;   // 心愿累计次数
+    uint32 wish_id = 3;   // 心愿对应的背饰id 为0说明没设置心愿
+  repeated base.BackShopItem shop_items = 4;   // 背饰商店的商品
+    repeated uint32 owned_advance_ids = 5;   // 拥有过的背饰advanceId列表
+    repeated uint32 active_compose_ids = 6;   // 已激活的背饰图鉴id列表
+    uint32 unlock_num = 7;   // 背包格子解锁次数
+    uint64 free_refresh_num = 8;   // 今日已使用的免费刷新次数
+    uint32 guarantee_cur_num = 9;   // 保底当前数
+    uint32 icon = 10;  // 背饰icon
+    map<uint32, base.BackBookItem> book = 11;  // 背饰图鉴 key-advanceId
+    uint32 book_lv = 12;  // 图鉴等级
+    uint32 book_point = 13;  // 图鉴值
+    uint32 slot_lv = 14;  // 槽位等级
+}
+
+// 0.9.0-爬塔
+message UserTower {
+    uint32 id = 1;  // 爬塔通关层数
+    uint32 first_pass_max_id = 2;  // 首通记录最大层数
+    int64 latest_reset_time = 3;  // 最近重置时间戳
+  repeated uint32 obtained_all_first_ids = 4;  // 领取服务器首通奖励
+    repeated uint32 drop_buff_ids = 5;  // 掉落 buff 列表
+    repeated TowerBuffSlot buff_slots = 6;  // 爬塔 buff 槽位
+  // uint32 server_history_max_id = 7;             // 服务器历史最大通关 id
+  TowerPrefab prefab_cond = 8;  // 预设条件
+}
+
+message TowerBuffSlot {
+    uint32 id = 1;  // buff id
+  uint32 level = 2;  // buff 等级
+}
+
+message TowerPrefab {
+  repeated uint32 pefer_attrs = 1;  // 偏好属性
+    uint32 refresh_max_cnt = 2;  // 最大刷新次数
+    bool is_open = 3;  // 预设是否开启
+}
+
+message TowerFloorUsers {
+    uint32 floor = 1;  // 层数
+  repeated base.SimpleUser users = 2;  // 玩家列表
+}
+
+// 0.9.0-佣兵图鉴
+message CompanionBookItem {
+    uint32 lv = 1;  // 0级代表未激活
+  uint32 quality = 2;  // 历史获得的最高品质
+}
+
+message UserCompanionBook {
+  map<uint32, CompanionBookItem> companion = 1;  // key-advanceId
+    uint32 lv = 2;  // 图鉴等级
+    uint32 point = 3;  // 图鉴值
+}
+
+// 0.9.0-头衔
+message UserHonor {
+    uint32 id = 1;  // 当前头衔ID
+  repeated uint32 awarded_tasks = 2;  // 已领取的任务
+}
+
+// 0.9.0-首充
+message FirstRechargeGroup {
+    uint32 group = 1;  // 首充组id
+    int64 end_tm = 2;  // 结束时间戳 为0永不结束
+    int64 buy_tm = 3;  // 购买时间戳 为0说明首充还未购买
+    uint32 days = 4;  // 从购买时起累计的登录天数
+  repeated uint32 awarded_ids = 5;  // 已领取的奖励
+}
+
+// 0.9.50-一条龙礼包
+message UserSeriesGift {
+    uint32 group = 1;  // 组 id
+    uint32 id = 2;  // 领取的礼包 id
+  int64 trigger_time = 3;  // 触发时间
+  uint32 activity_id = 4;  // 活动 id
+    uint32 duration = 5;  // 持续时间
+}
+
+// 0.9.50-每日惊喜福利
+message UserDailySurpriseBenefit {
+    uint32 id = 1;  // 已经领取福利 id
+  int64 duration = 2;  // 下一 id 今日累计时间
+}
+
+// 0.9.50-功能预览奖励
+message UserFunctionPreview {
+  repeated uint32 ids = 1;  // 领奖记录id
+}
+
+// 0.9.0-时装
+message Dress {
+    uint32 id = 1;  // id即为base_id
+  int64 end_tm = 2;  // 结束时间戳 0-永久
+}
+
+message OpDress {
+  repeated Dress insert = 1;  // 新增
+  repeated Dress update = 2;  // 更新
+    repeated uint32 del = 3;  // 删除
+}
+
+message GoblinDress {
+    uint32 id = 1;  // id即为base_id
+    int64 end_tm = 2;  // 结束时间戳 0-永久
+  int64 obtain_tm = 3;  // 获得时间
+}
+
+// 1.2.50 - 哥布林时装
+message OpGoblinDress {
+  repeated GoblinDress insert = 1;  // 新增
+  repeated GoblinDress update = 2;  // 更新
+    repeated uint32 del = 3;  // 删除
+}
+
+// 0.9.50-宝库
+message UserTreasury {
+  uint32 id = 1;  // 通关最高 id
+}
+
+// 0.9.50-问卷
+message Questionnaire {
+    uint32 id = 1;   // 问卷ID
+    uint32 type = 2;   // 问卷类型
+    string url = 3;   // 问卷url
+    int64 start_tm = 4;   // 开始时间
+    int64 end_tm = 5;   // 结束时间
+    uint32 min_level = 6;   // 最小等级
+    uint32 max_level = 7;   // 最大等级
+    bool is_trigger = 8;   // 是否触发(false:不触发;true:触发自定义类型)
+    uint32 quest_type = 9;   // 触发类型
+  uint32 quest_value1 = 10;  // 触发值
+  uint32 quest_value2 = 11;  // 触发值
+}
+
+// 0.9.50-世界BOSS
+message WorldBoss {
+  base.WorldBoss world_boss = 1;
+    uint64 respawn_cnt = 2;  // 已使用的复活次数
+}
+
+// 1.0.0-短期战令
+message UserShortBattlePass {
+    int64 start_tm = 1;   // 本期开始时间戳
+    int64 end_tm = 2;   // 本期结束时间戳
+    ShortBattlePass active_pass = 4;   // 活跃战令
+    ShortBattlePass sign_pass = 5;   // 签到战令
+    map<uint32, uint32> packs = 6;   // 礼包 key-礼包id value 1-已购买 2-已领取
+    uint32 pack_buy_num = 7;   // 礼包总购买次数
+    uint32 pack_progress_award_id = 8;   // 已领取的次数进度奖励
+  repeated uint64 awarded_daily_quest = 9;   // 已领取的每日任务
+    uint32 pack_group = 10;  // 礼包组
+    uint64 id = 11;  // 活动ID
+}
+
+message ShortBattlePass {
+    uint32 group = 1;  // 所属组
+    uint32 unlock_lv = 2;  // 0未解锁 1-已解锁付费
+  map<uint32, uint32> awarded_ids = 3;  // 已领取的奖励项 key-id value-1领取免费 2-领取付费
+    repeated uint32 re_sign = 4;  // 已补签记录 只对签到战令有效 key-第X天
+}
+
+// 1.0.0-主题活动
+message UserThemeActivity {
+    uint32 id = 1;   // 活动id
+    int64 start_tm = 2;   // 活动开始时间
+    int64 end_tm = 3;   // 活动结束时间
+    uint32 recruit_id = 4;   // 奖池id
+    uint32 roll_num = 5;   // 总抽奖次数
+  repeated ThemeActivityLotteryItem lottery_items = 6;   // 刮刮乐奖励区域
+    repeated uint32 award_acc_ids = 9;   // 已领取的累计奖励
+    repeated uint32 award_quest_ids = 10;  // 已领取的任务
+    map<uint32, uint32> pack_buy_num = 11;  // 礼包购买次数 key-礼包id value-购买次数
+    uint32 open_day = 12;  // 开服天数限制
+    uint32 wish_index = 13;  // 心愿索引 从1开始 0代表未设置
+    base.Award wish_award = 14;  // 心愿奖励
+    int64 award_tm = 15;  // 活动展示时间
+    bool is_open_server_activity = 16;  // 是否开服活动
+}
+
+message ThemeActivityLotteryItem {
+  repeated base.Award awards = 1;  // 奖励
+    repeated uint32 icon = 2;  // 图案
+    bool is_scrape = 3;  // 是否刮开
+    uint32 lucky_pos = 4;  // 幸运图案位置 从1开始，0代表不幸运
+}
+
+// 1.0.0-领地
+message UserTerritory {
+    TerritoryLike like = 1;  // 点赞
+    TerritoryMainCity main_city = 2;  // 领地主城
+    repeated TerritoryBuilding buildings = 3;  // 领地建筑
+    repeated TerritoryLog logs = 4;  // 领地日志
+    repeated TerritoryEvent events = 5;  // 领地事件
+  repeated TerritoryFriendEvent friend_events = 6;  // 好友事件
+    uint32 quest_id = 8;  // 任务id
+    bool already_enter = 9;  // 是否已进入领地
+}
+
+// 领地主城
+message TerritoryMainCity {
+    uint32 id = 1;  // 主城id
+    uint32 dispatch_area = 2;  // 派遣区域
+    int64 dispatch_time = 3;  // 派遣时间
+  repeated uint32 wait_select_area = 4;  // 待选区域
+    bool auto = 5;  // 是否自动派遣
+    bool dispatch_reward = 6;  // 是否有派遣奖励
+    uint32 event_id = 7;  // 事件id
+}
+
+// 其它建筑,如矿场、农田、伐木场等
+message TerritoryBuilding {
+    uint32 type = 1;  // 建筑类型
+    uint32 id = 2;  // 建筑id
+    uint64 product_num = 3;  // 变化前累计产出数量(当前等级段不包含在内),为了防止丢失精度该值是速率*时间,客户端拿到该值需要除以速率
+    int64 start_timestamp = 4;  // 产出开始时间戳
+    int64 current_level_start_timestamp = 5;  // 变化开始时间戳
+  repeated TerritoryPrivilege privileges = 6;  // 特权
+    uint32 event_id = 7;  // 事件id
+    map<uint32, uint64> companions = 8;  // 驻守佣兵列表 key-位置从0开始 value-佣兵id
+}
+
+message TerritoryPrivilege {
+    uint32 id = 1;  // 特权id
+  int64 start_time = 2;  // 开始时间
+    int64 end_time = 3;  // 结束时间
+    uint32 value = 4;  // 特权值
+}
+
+message TerritoryLike {
+  repeated uint64 like_uids = 1;  // 点赞列表
+    uint32 like = 2;  // 点赞数
+}
+
+message FriendTerritory {
+    uint32 main_city_id = 1;  // 好友主城 id
+  repeated FriendTerritoryBuilding buildings = 2;  // 好友建筑,key:建筑类型,value:建筑等级
+    uint32 like = 3;  // 好友点赞数
+}
+
+message FriendTerritoryBuilding {
+  uint32 type = 1;  // 建筑类型
+    uint32 id = 2;  // 建筑id
+}
+
+message TerritoryLog {
+    uint32 id = 1;  // 记录id
+    uint64 uid = 2;  // 好友id
+    string name = 3;  // 好友名
+    int64 timestamp = 4;  // 访问时间(纳秒)
+    repeated base.Award awards = 5;  // 奖励
+  map<string, string> param_pairs = 6;  // 参数对
+}
+
+message TerritoryEvent {
+    uint32 event_id = 1;  // 事件id
+  int64 trigger_time = 2;  // 触发时间
+  uint32 magic_value = 3;  // 客户端用于放置到指定 npc 上的魔法值
+}
+
+message TerritoryFriendEvent {
+  TerritoryEvent event = 1;  // 事件
+    uint64 friend_uid = 2;  // 好友 uid
+    bool is_done = 3;  // 是否已处理
+}
+
+message UserAction {
+  uint32 action_type = 1;  // 行为类型
+    uint32 target = 2;  // 行为目标
+    uint64 value = 3;  // 进度值
+}
+
+message OpUserAction {
+    uint32 reset_type = 1;  // 重置类型（enums.ACTION_PROGRESS_RESET_TYPE）
+    int64 init_time = 2;  // 初始化时间（用于定期重置任务）
+  map<uint64, UserAction> upsert = 3;  // 新增&更新进度（key为行为类型<<32+行为目标）
+    bool del_all = 4;  // 重置进度
+}
+
+// 1.1.0-签到送全英雄
+message UserSignIn {
+    uint32 base_id = 1;  // 配置id
+    uint32 sign_days = 2;  // 已签到的天数
+    repeated uint32 daily_awarded_ids = 3;  // 已领取的每日奖励id
+  map<uint32, uint32> cumulate_awarded_ids = 4;  // 已经领取的累计签到奖励 key:sign_in_cumulate_reward_info的id value:sign_in_reward_group_info的id
+}
+
+message SecretRedPoint {
+    uint32 id = 1;  // 当前章节ID
+    bool is_pass = 2;  // 当前章节是否通关
+  SecretBoss boss = 3;  // 挑战中的Boss信息
+}
+
+message Secret {
+    uint32 id = 1;  // 当前章节ID
+  repeated uint32 pass_stage_ids = 2;  // 通关关卡ID
+}
+
+message UserSecretBoss {
+    uint32 boss_id = 1;  // BossId
+    int64 boss_cd = 2;  // BossCD时间
+    int64 init_time = 3;  // Boss初始化时间
+    uint64 boss_score = 4;  // Boss挑战积分
+  int64 last_challenge_time = 5;  // Boss最后挑战时间
+}
+
+message SecretBoss {
+    uint32 id = 1;  // BossId
+  int64 init_time = 2;  // 初始化时间
+    int64 end_time = 3;  // 结束时间
+}
+
+message SecretBossRank {
+    uint64 user_id = 1;
+    uint64 score = 2;
+  base.UserSnapshot user = 3;  // 玩家快照
+}
+
+// 1.0.1-跨服竞技场
+message UserPeakArena {
+    uint32 activity_id = 1;  // 活动id
+  repeated base.PeakArenaTeamUnit attack_team = 3;  // 攻击队伍
+  repeated base.PeakArenaTeamUnit defend_team = 4;  // 防守队伍
+    uint32 use_free_match = 5;  // 使用免费匹配次数(免费刷新次数)
+    int64 latest_match_time = 6;  // 最近使用匹配的时间点(用于计算 cd 时间)
+    uint32 buff_base_id = 7;  // 本赛季加成 buff id
+    repeated uint64 sids = 8;  // 本区服务器列表
+    uint32 show_my_rank = 9;  // 展示期显示我的最终排名用
+}
+
+message UserPeakArenaBattleRecord {
+  base.PeakArenaBattleRecord record = 1;  // 战斗记录
+    base.SimpleUser user = 2;  // 玩家信息
+}
+
+message PeakArenaDefenseTeamDetail {
+    UserDetail user_detail = 3;
+  repeated base.PeakArenaTeamUnit team_units = 4;
+}
+
+message Competition {
+    uint32 id = 1;  // 活动id
+  repeated uint32 awarded_quest_ids = 2;  // 已领取的任务
+    uint32 awarded_score_id = 3;  // 已领取的积分奖励
+}
+
+message CirculateAct {
+    uint32 id = 1;  // 活动id
+  repeated uint32 awarded_quest_ids = 2;  // 已领取的任务
+    uint32 round = 3;  // 任务轮次
+}
+
+// 玩家战宠信息
+message SimplePet {
+    uint32 base_id = 2;  // 宠物配置id
+    uint32 level = 1;  // 等级
+  map<uint32, out_base.SimplePetEquipment> equips = 3;  // 已装备的装备(槽位id:1-4)
+}
+
+// 玩家战宠战宠装备
+message SimplePetEquipment {
+    uint32 base_id = 1;  // 装备配置id
+    uint32 level = 2;  // 当前等级
+  map<uint32, uint32> random_attrs = 3;  // 随机属性组id（key:属性组id value:属性浮动值）
+    repeated uint32 legend_attrs = 4;  // 传奇属性组id
+}
+
+// 操作战宠
+message OpPet {
+  map<uint64, base.Pet> upsert = 1;  // 新增&更新
+    repeated uint64 del = 2;  // 删除
+}
+
+// 操作战宠装备
+message OpPetEquipment {
+  map<uint64, base.PetEquipment> upsert = 1;  // 新增&更新
+    repeated uint64 del = 2;  // 删除
+}
+
+message GuildWeeklyQuestInfo {
+    uint64 weekly_task_count = 2;  // 公会周任务计数(总物资)
+  repeated uint32 weekly_guild_task_obtain = 3;  // 公会任务领奖记录
+    repeated uint32 weekly_quest_obtain = 4;  // 个人任务领取记录
+}
+
+// 玩家公会成员信息
+message UserGuildWeeklyData {
+  uint64 weekly_supplies = 1;  // 本周物资
+    uint64 gve_supplies = 2;  // gve物资
+}
+
+// 领地封臣数据
+message TerritoryVassal {
+    uint32 pos = 1;  // 槽位位置 从1 开始
+    uint64 vassal_user_id = 2;  // 封臣id，可为0，代表未征服或者已脱离 enums.TERRITORY_LORD_CONFRONT_STATE
+    uint32 confront_state = 3;  // 迎战状态, 1:领主迎战 2:封臣自己迎战
+    bool is_levy_awarded = 4;  // 是否已征税
+  base.SimpleUser simple_user = 5;  // 形象
+}
+
+// 领地领主数据
+message TerritoryLord {
+    uint64 lord_user_id = 1;  // 领主id
+  base.SimpleUser simple_user = 2;  // 形象
+}
+
+// 领地领主红点
+message TerritoryLordRedPoint {
+  repeated out_base.TerritoryVassal vassals = 1;  // 领地封臣
+    bool is_grant_awarded = 2;  // 是否已领取封赏奖励
+    int64 func_open_time = 3;  // 功能开启时间
+}
+
+// 节庆活动信息
+message FestivalActivityInfo {
+    uint32 base_id = 1;  // 活动 base_id
+    int64 start_time = 2;  // 活动开始时间
+    int64 end_time = 3;  // 活动结束时间
+    uint32 open_day = 4;  // 开服天数限制
+    int64 award_time = 5;  // 活动展示时间
+    bool is_open_server_activity = 6;  // 是否开服活动
+}
+
+// 节庆活动-关卡圈信息
+message FestivalActivityRoundGrids {
+    uint32 round_id = 1;  // 圈id（最外圈1、中间圈2、最内圈3）
+  repeated uint32 open_grid_ids = 2;  // 已经开启的格子（1-20、1-12、1-4）
+    uint32 specail_grid_id = 3;  // 特殊格子
+}
+
+// 节庆活动红点
+message FestivalActivityRedPoint {
+  FestivalActivityInfo activity_info = 1;  // 活动信息
+    repeated uint32 award_quests = 2;  // 已领取的任务
+    uint32 stage_id = 3;  // 当前关卡(层数)
+}
+
+// 挑战时单次结果
+message FestivalActivityGridResult {
+    uint32 grid_id = 1;  // 当次命中的格子id
+  map<uint32, base.Award> grid_awards = 2;  // 当次命中的格子奖励（key:格子id）
+}
+
+// 挑战时单圈结果
+message FestivalActivityRoundResults {
+    uint32 round_id = 1;  // 圈id（最外圈1、中间圈2、最内圈3）
+  repeated FestivalActivityGridResult grid_results = 2;  // 格子结果
+    repeated uint32 open_grid_ids = 3;  // 已经开启的所有格子（1-20、1-12、1-4）
+}
+
+// 玩家工会红包数据
+message UserGuildRedPacket {
+    repeated uint64 pick_red_packet_ids = 1;  // 玩家已拾取过的红包唯一id（随红包过期而清除）
+    map<uint32, uint32> pick_daily_nums = 2;  // 玩家每日拾取红包次数（key:红包baseid value:次数）
+  map<uint32, uint32> pick_red_packets = 3;  // 玩家拾取的红包（key:红包唯baseid value:数量）
+  map<uint32, uint32> group_left_money = 4;  // 玩家充值红包剩余金额（key:红包组groupid value:剩余金额）
+    map<uint32, uint32> daily_get_nums = 5;  // 玩家每日充值获取红包数量（key：红包baseid value：数量）
+}
+
+// 公会红包红点
+message GuildRedPacketRedPoint {
+  bool can_pick = 1;  // 公会里是否有当前玩家可拾取的红包
+  bool can_open = 2;  // 是否有可开启的红包
+}
+
+// 槽位数据
+message SlgMainCitySlot {
+    uint32 tp = 1;  // 关联 enums.AWARD_TYPE
+  uint32 pos = 2;  // 位置
+    uint64 id = 3;  // 胚子的唯一id
+}
+
+message SlgMainCity {
+    uint32 level = 1;  // 等级
+  repeated SlgMainCitySlot slots = 2;  // 槽位数据
+}
+
+// 兵营
+message SlgBarrack {
+    uint32 tp = 1;  // 类型
+  uint32 level = 2;  // 等级
+}
+
+message SlgBattlePass {
+    uint32 id = 1;  // 战令ID 0代表当前没有战令
+    uint32 lv = 2;  // 战令等级
+    uint32 low_awarded_lv = 3;  // 普通战令已领取的最高等级
+    uint32 mid_awarded_lv = 4;  // 高级战令已领取的最高等级
+    uint32 unlock_lv = 5;  // 0-未解锁 1-解锁高级 2-解锁超级
+  repeated uint64 awarded_daily_quest = 6;  // 已领取的每日任务
+    repeated uint64 awarded_quest = 7;  // 已领取的战令任务
+    uint32 extra_awarded_lv = 8;  // 额外奖励已领取的最高等级
+}
+
+message SlgBattlePassRedPoint {
+    uint32 id = 1;  // 战令ID
+    uint32 lv = 2;  // 战令等级
+    uint32 low_awarded_lv = 3;  // 普通战令已领取的最高等级
+    uint32 mid_awarded_lv = 4;  // 高级战令已领取的最高等级
+    uint32 unlock_lv = 5;  // 0-未解锁 1-解锁高级 2-解锁超级
+  uint32 extra_awarded_lv = 6;  // 额外奖励已领取的最高等级
+}
+
+message SlgCityQuest {
+  map<uint32, uint32> city_progress = 1;  // 攻城任务进度 key:cityId value:progress(击杀守军数)
+  repeated uint32 city_quest_awards = 2;  // 已领取奖励的任务
+}
+
+message WishPool {
+  base.WishPool wish_pool = 1;
+    WishPoolDaily daily = 2;
+}
+
+message WishPoolDaily {
+    uint32 daily_award_times = 1;  // 当天免费已领奖次数 0/1
+    uint32 daily_recharge_money = 2;  // 当天充值金额(废弃)
+    uint32 daily_recharge_resource = 3;  // 当天已获得充值资源数量(废弃)
+    uint32 daily_active_resource = 4;  // 当天已获得活跃资源数量
+    uint32 daily_open_box_num = 5;  // 当天已开启宝箱数量
+}
+
+message WishPoolRedPoint {
+  base.WishPoolInfo info = 1;
+    uint32 draw_num = 2;  // 已抽奖次数
+    WishPoolDaily daily = 3;
+}
+
+message UserGacha {
+    uint32 id = 1;   // 活动唯一ID
+    uint32 total_times = 2;   // 总抽奖次数
+    uint32 lucky_value = 3;   // 幸运值
+    uint32 round = 4;   // 当前轮次
+    map<uint32, uint32> reward_counts = 5;   // 已经抽到的奖励 key:配置id，v:抽到的数量
+    repeated uint64 reward_quests = 6;   // 领奖任务
+  repeated uint64 reward_daily_quests = 7;   // 每日领奖任务
+    map<uint32, uint32> award_index = 8;   // 选择奖励id=>index
+    repeated uint32 accumulated_awards = 9;   // 已领取的累抽奖励
+    uint32 sub_id = 10;  // 活动id
+}
+
+message GachaRedPoint {
+    base.GachaInfo info = 1;
+    repeated uint64 reward_quests = 2;  // 领奖任务
+  repeated uint64 reward_daily_quests = 3;  // 每日领奖任务
+    repeated uint32 accumulated_awards = 4;  // 已领取的累抽奖励
+}
+
+// 宝箱奖励日志
+message AlchemyAwardLog {
+    string name = 1;  // 玩家名
+  uint32 chest_base_id = 2;  // alchemy_chest_info的id
+    int64 create_time = 3;  // 创建时间(纳秒)
+}
+
+message AlchemyRequest {
+    uint64 id = 1;  // 发布的求助唯一id
+    uint32 item_id = 2;  // 发布的药剂id
+    uint64 send_uid = 3;  // 发布求助的玩家id
+    string name = 4;  // 发布求助的玩家名
+  int64 create_time = 5;  // 发布求助的时间
+    uint32 state = 6;  // 1: 求助中 2: 已赠送 3: 已领取
+}
+
+// 帮助日志
+message AlchemyRequestLog {
+    string name = 1;  // 玩家名
+    uint32 item_id = 2;  // 请求得药剂id
+  int64 create_time = 3;  // 创建时间(纳秒)
+    uint32 tp = 4;  // 1、赠送 2、受赠
+}
+
+message AlchemyGuildChest {
+    uint64 id = 1;  // 宝箱唯一id
+    uint32 baseId = 2;  // 宝箱配置id
+  int64 create_time = 3;  // 宝箱获得时间
+    uint64 from_uid = 4;  // 宝箱创建者id
+    string user_name = 5;  // 玩家名字
+}
+
+message PersonalComp {
+    uint32 id = 1;  // 活动id
+  repeated uint64 awarded_quest_ids = 2;  // 已领取的任务
+  repeated uint64 awarded_score_ids = 3;  // 已领取的积分奖励
+}
+
+message UserBattlePass {
+    uint32 id = 1;   // 战令ID 0代表当前没有战令
+    uint64 weekly_point = 2;   // 本周获得积分
+    uint32 lv = 4;   // 战令等级
+    uint32 low_awarded_lv = 5;   // 普通战令已领取的最高等级
+    uint32 mid_awarded_lv = 6;   // 高级战令已领取的最高等级
+    uint32 unlock_lv = 7;   // 0-未解锁 1-解锁高级 2-解锁超级
+    repeated uint64 awarded_daily_quest = 8;   // 已领取的每日任务
+  repeated uint64 awarded_weekly_quest = 9;   // 已领取的每周任务
+    repeated uint64 awarded_quest = 10;  // 已领取的战令任务
+    repeated uint64 awarded_actives = 11;  // 已领取的活跃id列表
+    uint32 extra_awarded_lv = 12;  // 额外奖励已领取的最高等级
+    uint64 act_id = 13;  // 活动id
+}
+
+message ActivityOpenInfo {
+    uint32 tp = 1;  // 活动类型
+  base.SimpleActivityInfo info = 2;
+}
+
+message UserPiggyBank {
+    uint32 base_id = 1;  // 活动配置id
+    uint64 progress = 2;  // 进度
+    bool is_awarded = 3;  // 是否已领取
+    int64 start_time = 4;  // 开始时间
+    int64 end_time = 5;  // 结束时间
+    uint64 activity_id = 6;  // 活动唯一id
+    bool is_recharge_awarded = 7;  // 是否已领取充值奖励(废弃)
+    repeated uint32 recharges = 8;  // 已付费档位
+}
+
+message GemBoard {
+    uint32 board_id = 1;  // 棋盘ID
+    repeated uint32 unlock = 2;  // 手动解锁的方块组中心位置
+    map<uint32, uint32> gems = 3;  // 镶嵌宝石 key-宝石中心位置 value-宝石ID
+}
+
+message GemBoardEquip {
+    map<uint32, uint32> gems = 1;  // key-宝石中心位置 value-宝石ID
+}
+
+message GemBoardDetail {
+    uint32 max_gem_total_lv = 1;  // 历史最大镶嵌宝石总等级
+    repeated base.Attr gem = 2;  // 宝石属性
+    repeated base.Attr talent = 3;  // 天赋属性
+}
+
+// 宝石OP操作
+message OpGem {
+    map<uint32, base.Gem> upsert = 1;  // 新增&更新
+    repeated uint32 del = 2;  // 删除
+}
+
+// 合成结构
+message GemCompose {
+    base.Award award = 1;  // 宝石
+    bool guaranteed = 2;  // 是否保底合成
+}
+
+message UserCrossTeam {
+    base.CrossTeam team = 1;
+    base.CrossTeamSimpleMap simple_map = 2;  // 组队地图
+    base.UserCrossTeamStage stage = 3;  // 玩家所在当前关卡信息
+    CrossTeamBuff buff = 4;  // 获得的 buff
+    CrossTeamRelicBag relic_bag = 5;  // 已获得的遗物
+    CrossTeamUseItemBag use_item_bag = 6;  // 已获得的道具
+    bool main_rewards = 7;  // 是否有主线奖励可以领取
+    bool time_boss_rewards = 8;  // 是否有限时 boss 奖励可以领取
+}
+
+message CrossTeamBuff {
+    repeated uint32 buff_ids = 1;  // 获得的 buff
+}
+
+message CrossTeamRelicBag {
+    repeated uint32 relic_ids = 1;  // 已获得的遗物
+}
+
+message CrossTeamUseItemBag {
+    repeated uint32 item_ids = 1;  // 已获得的道具
+}
+
+// 1.3.90-节庆BOSS
+// 我的BOSS
+message CelebrationBoss {
+    uint64 boss_id = 1;  // BOSSid
+    uint32 base_id = 2;  // 配置id
+    base.SimpleUser helper = 3;  // 助战击杀玩家 非空说明BOSS已死亡但未领取分享奖励
+    int64 end_tm = 4;  // 过期时间戳
+    uint32 channel = 5;  // 分享频道
+    base.SimpleUser target = 6;  // 分享目标
+}
+
+// 其他人分享的BOSS
+message CelebrationShareBoss {
+    uint64 boss_id = 1;  // BOSSid
+    uint32 base_id = 2;  // 配置id
+    base.SimpleUser sharer = 3;  // 分享者
+    int64 end_tm = 4;  // 过期时间戳
+    uint32 channel = 5;  // 分享频道
+}
+
+message CelebrationBattlePass {
+    repeated uint32 unlock_types = 1;  // 已解锁的战令类型 战令类型(1.普通 2.高级 3.豪华)
+    map<uint32, uint32> awarded_lvs = 2;  // 已领取的等级奖励 key:战令类型(1.普通 2.高级 3.豪华) value:已领取的等级
+    repeated uint32 awarded_quest_ids = 3;  // 已领取任务id
+    uint32 extra_awarded_count = 4;  // 额外奖励领取次数
+}
+
+message UserVip {
+    uint32 vip_lv = 1;  // 当前vip等级
+    uint64 vip_exp = 2;  // 当前等级溢出vip经验
+    map<uint32, base.KV> vip_lv_tms = 3;  // vip等级数据(key:lv, value:达成时间-是否已领免费奖励)
+    repeated uint32 recharge_awards = 4;  // 已充值付费奖励(key:lv)
+    uint32 consecutive_days = 5;  // 连续登录天数
+    bool daily_exp_award = 6;  // 今日是否已领免费vip经验奖励
+    bool daily_gift_award = 7;  // 今日是否已领免费礼包奖励
+}
+
+message UserVipRedPoint {
+    uint32 vip_lv = 1;  // vip等级
+    bool is_red_point = 2;  // 是否有红点
+}
+
+message TeamBossTeamMember {
+    base.SimpleUser user = 1;  // 玩家信息
+    uint32 position = 2;  // 站位(1、前站，2、中站，3、末站)
+    bool is_assist = 3;  // 是否助战
+    bool is_leader = 4;  // 是否队长
+}
+
+message TeamBossTeam {
+    uint64 id = 1;  // 队伍id
+    uint32 floor_id = 2;  // 楼层id
+    repeated out_base.TeamBossTeamMember members = 3;  // 队伍成员
+    int64 create_time = 4;  // 创建时间
+}

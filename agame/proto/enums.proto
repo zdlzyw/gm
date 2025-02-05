@@ -1,0 +1,616 @@
+syntax = "proto3";
+
+package enums;
+
+option go_package = "common/base/enums;enums";
+
+// 所有enums必须以_TYPE结尾 并且前面的单词只能为大写A-Z以及_
+// battle_type 1:PVE,2:PVP
+message BATTLE_TYPE {
+  enum ENUM {
+    NONE = 0;
+      PVE = 1;
+      PVP = 2;
+  }
+}
+
+message BATTLE_IDENTITY_TYPE {
+  enum ENUM {
+      NONE = 0;
+      OWN = 1;
+    ENEMY = 2;
+  }
+}
+
+// 国家
+message COUNTRY {
+  enum ENUM {
+    NONE = 0;
+      WEI = 1;  // 魏
+      SHU = 2;  // 蜀
+      WU = 3;  // 吴
+      QUN = 4;  // 群
+      MAX = 5;
+      ALL = 100;  // 所有
+  }
+}
+
+// 兵种
+message JOB_TYPE {
+  enum ENUM {
+      NONE = 0;
+      RIDER = 1;   // 骑兵
+    ARMOR_MAN = 2;   // 甲
+    SPEAR_MAN = 3;   // 枪
+      ARCHER = 4;   // 弓手
+      WISE_MAN = 5;   // 策;
+    COMMANDER = 90;  // 军师
+  }
+}
+
+// 性别
+message SEX_TYPE {
+  enum ENUM {
+      NONE = 0;
+      MALE = 1;  // 男
+    FEMALE = 2;  // 女
+  }
+}
+
+message AWARD_TYPE {
+  enum ENUM {
+      NONE = 0;
+      RESOURCE = 1;   // 通用资源
+      FRAGMENT = 2;   // 碎片
+      ITEM = 3;   // 道具
+    COMPANION = 4;   // 伙伴
+      PET = 5;   // 战宠
+    EQUIPMENT = 6;   // 装备
+      PLAY_NUM = 8;   // 玩法次数
+      ARTIFACT = 10;  // 神器
+    // ARTIFACTSET = 11; // 神器套装
+      GUILD_RESOURCE = 12;     // 公会资源
+      AVATAR = 13;     // 头像
+      AVATAR_FRAME = 14;     // 头像框
+      FIX_EQUIPMENT = 15;     // 固定装备
+      BACK = 16;     // 背饰
+      DRESS = 17;     // 时装
+    COMPANION_EQUIPMENT = 18;     // 佣兵装备
+      PET_EQUIPMENT = 19;     // 战宠装备
+      GOBLIN_DRESS = 21;     // 哥布林时装
+    ALCHEMY_GUILD_CHEST = 22;     // 公会宝箱
+      GEM = 23;     // 宝石
+      GEM_BOARD = 24;     // 宝石棋盘
+      DIAMOND = 999;    // 钻石
+      DROP = 1000;   // 掉落
+      ROGUE_RELIC = 10001;  // 遗物
+      ROGUE_ITEM = 10002;  // 消耗品
+      CROSS_TEAM_RELIC = 10004;  // 跨服组队遗物
+      CROSS_TEAM_ITEM = 10005;  // 跨服组队消耗品
+  }
+}
+
+// message AWARD_VALUE_TYPE {
+//   enum ENUM {
+//     NONE = 0;
+//     ROLE_EXP = 1; //角色经验
+//     KNIGHT_EXP = 2; //武将经验
+//     VIP_EXP = 3; //VIP经验
+//     MILITARY_WRIST = 4; //军令
+//     ARENA_COIN = 5; //竞技场币
+//     EXPEDITION_COIN = 6; //远征币
+//     FRIEND_POINT = 7; //友情点
+//     GUILD_COIN = 8; //军团币
+//     EXPLOITS = 11; //战功
+//     MID_ARENA_COIN = 12; //中级竞技币
+//
+//     RUSE_COIN = 14; //奇谋演兵币
+//     RUSE_TALENT_COIN = 15; //奇谋演兵天赋币
+//   }
+// }
+
+// 阵容类型 NOTE:id要连续，不允许跳id
+message FORMATION_TYPE {
+  enum ENUM {
+      NONE = 0;
+      COMMON = 1;   // 通用阵容
+      INFINITE1 = 2;   // 副地牢1
+      INFINITE2 = 3;   // 副地牢2
+      INFINITE3 = 4;   // 副地牢3
+      ROGUE = 5;   // 迷宫
+      ARENA_DEFEND = 6;   // 竞技场防守
+      GUILD_BOSS = 7;   // 公会BOSS
+    PEAK_ARENA_ATTACK = 8;   // 巅峰竞技场进攻阵容
+    PEAK_ARENA_DEFEND = 9;   // 巅峰竞技场防守阵容
+      GUILD_GVG_DEFEND = 10;  // 公会战役防守阵容
+      MAX = 11;
+  }
+}
+
+message FORCE_TYPE {
+  enum ENUM {
+      NONE = 0;
+      SELF = 1;
+    ENEMY = 2;
+  }
+}
+
+message ATTR_INHERIT_TYPE {
+  enum ENUM {
+      NONE = 0;
+      VALUE = 1;  // 绝对值继承
+    PER_THOUSAND = 2;  // 千分比继承
+  }
+}
+
+// 战斗单位类型
+// unit_type 1:主角,2:佣兵,3:怪物,4:宠物
+message BATTLE_UNIT_TYPE {
+  enum ENUM {
+      NONE = 0;
+      MAIN = 1;  // 主角
+    COMPANION = 2;  // 佣兵
+      MONSTER = 3;  // 怪物
+      PET = 4;  // 宠物
+      ARTIFACT = 5;  // 神器
+  }
+}
+
+message BATTLE_UNIT_ID {
+  enum ENUM {
+    COMMANDER = 0;  // 军师
+  }
+}
+
+// GM命令
+message GMCMD_ID {
+  enum ENUM {
+      NONE = 0;
+    RESET_CRUSADE = 1;  // 重置八阵演兵
+  }
+}
+
+message RANK_ID_TYPE {
+  enum ENUM {
+      NONE = 0;
+      GUILD_BOSS_1 = 1;   // 公会BOSS1排行榜
+      INFINITE_MAIN = 2;   // 主地牢排行榜
+      INFINITE_1 = 3;   // 副地牢1排行榜
+      INFINITE_2 = 4;   // 副地牢2排行榜
+      INFINITE_3 = 5;   // 副地牢3排行榜
+      GUILD_BOSS_2 = 6;   // 公会BOSS2排行榜
+      GUILD_BOSS_3 = 7;   // 公会BOSS3排行榜
+      GUILD_LEVEL = 8;   // 公会等级榜
+      USER_FV = 9;   // 玩家战力榜
+      MAIN_DUNGEON = 10;  // 主线进度榜
+      USER_LEVEL = 11;  // 玩家等级榜
+      TREASURE_BOX = 12;  // 开箱数量榜
+      TOWER = 14;  // 爬塔
+      COMPREHENSIVE = 15;  // 综合竞赛排行榜
+      PARTNER = 16;  // 伙伴竞赛排行榜
+      ARTIFACT = 17;  // 神器竞赛排行榜
+      PET = 18;  // 战宠竞赛排行榜
+      TERRITORY_LORD = 19;  // 领地领主系统排行
+      BACK = 20;  // 背饰竞赛排行榜
+    ALCHEMY_GUILD_POINT_CROSS = 21;  // 炼金工坊-公会积分排行榜
+      ALCHEMY_GUILD_POINT_SELF = 22;  // 炼金工坊-本服积分排行榜
+      CELEBRATION_BOSS = 23;  // 庆典BOSS排行榜
+      CELEBRATION = 24;  // 庆典排行榜
+      WHEEL_NORMAL = 25;  // 转盘普通排行榜
+      WHEEL_ADVANCE = 26;  // 转盘高级排行榜
+  }
+}
+
+// 排行榜范围类型
+message RANK_SCOPE_TYPE {
+  enum ENUM {
+      NONE = 0;
+    LOCAL = 1;  // 本服排行榜
+    CROSS = 2;  // 跨服排行榜
+      MAX = 3;  // 最大值（插入新类型时同时修改此数值）
+  }
+}
+
+// 排行榜单位类型
+message RANK_WRAP_TYPE {
+  enum ENUM {
+      NONE = 0;
+      USER = 1;  // 玩家排行榜
+    GUILD = 2;  // 军团排行榜
+      MAX = 3;  // 最大值（插入新类型时同时修改此数值）
+  }
+}
+
+// 排行榜排序规则类型
+message RANK_CMP_TYPE {
+  enum ENUM {
+    NONE = 0;
+      INC = 1;  // 升序排行榜（First、Second从大到小排序，Third从小到大排序）
+      DEC = 2;  // 降序排行榜（First、Second从大到小排序，Third从大到小排序）
+      MAX = 3;  // 最大值（插入新类型时同时修改此数值）
+  }
+}
+
+// 战斗结果类型
+message BATTLE_RESULT_TYPE {
+  enum ENUM {
+    NONE = 0;  // 未战
+      WIN = 1;  // 胜利
+    LOSE = 2;  // 失败
+  }
+}
+
+// 积分商店类型
+message SCORE_SHOP_TYPE {
+  enum ENUM {
+      NONE = 0;
+      COMMON = 1;  // 通用商店
+      ARENA = 2;  // 竞技场商店
+      ARTIFACT = 3;  // 神器商店
+      GUILD = 4;  // 公会商店
+    THEME_ACTIVITY = 5;  // 主题活动商店
+    // = 6; 神兽商店
+    // = 7; 巅峰竞技场商店
+      FESTIVAL_ACTIVITY = 8;   // 节庆活动商店
+      ALCHEMY_ACTIVITY = 9;   // 炼金工坊商店
+      CELEBRATION = 12;  // 节庆活动商店
+  }
+}
+
+// 积分商店次数限购类型
+message SCORE_SHOP_NUM_LIMIT_TYPE {
+  enum ENUM {
+      NONE = 0;  // 无限制
+      PERM = 1;  // 永久限制
+      DAILY = 2;  // 每日限制
+      WEEKLY = 3;  // 每周限制
+    THEME_ACTIVITY = 4;  // 主题活动限制
+    // = 5; 永恒战场单赛季限制
+      FESTIVAL_ACTIVITY = 6;  // 节庆活动限制
+      ALCHEMY_ACTIVITY = 7;  // 炼金工坊限制
+      GUILD_GVG_ACTIVITY = 8;  // 公会战役限制
+      CELEBRATION = 9;  // 节庆活动限制
+      MONTHLY = 10; // 每月限制
+  }
+}
+
+// 卡池时间类型
+message RECRUIT_TYPE {
+  enum ENUM {
+      NONE = 0;
+      NORMAL = 1;  // 普通
+    TIMELIMIT = 2;  // 限时
+  }
+}
+
+// 礼包商店类型
+message PACK_SHOP_TYPE {
+  enum ENUM {
+      NONE = 0;
+    COMPREHENSIVE_COMP = 1;  // 综合竞赛
+      PARTNER_COMP = 2;  // 伙伴竞赛
+      ARTIFACT_COMP = 3;  // 神器竞赛
+      PET_COMP = 4;  // 战宠竞赛
+      BACK_COMP = 5;  // 背饰竞赛
+    // 中间给其他胚子竞赛预留
+      FESTIVAL_ACTIVITY = 11;  // 节庆活动
+      GACHA = 12;  // 一番赏
+      PARTNER_CIRCULATE = 13;  // 伙伴循环
+    ARTIFACT_CIRCULATE = 14;  // 神器循环
+      BACK_CIRCULATE = 15;  // 背饰循环
+      PET_CIRCULATE = 16;  // 战宠循环
+      ALCHEMY = 17;  // 炼金工坊
+      PERSON_COMP_CHEST = 18;  // 个人竞赛-宝箱
+    PERSON_COMP_SOCIAL = 19;  // 个人竞赛-社交
+      PERSON_COMP_SLG = 20;  // 个人竞赛-slg
+      PERSON_COMP_PET = 21;  // 个人竞赛-战宠
+      COMPANION_RECRUIT = 22;  // 佣兵(伙伴)招募
+      ARTIFACT_RECRUIT = 23;  // 神器招募
+      CELEBRATION = 24;  // 节庆活动
+      VIP = 25;  // VIP功能
+  }
+}
+
+// 礼包次数限购类型
+message PACK_NUM_LIMIT_TYPE {
+  enum ENUM {
+      NONE = 0;    // 无限制
+      PERM = 1;    // 永久限制
+      DAILY = 2;    // 每日限制
+      WEEKLY = 3;    // 每周限制
+      COMP = 4;    // 竞赛活动限制
+      FESTIVAL_ACTIVITY = 5;    // 节庆活动限制
+      GACHA = 6;    // 一番赏
+      CIRCULATE = 7;    // 循环活动限制
+      ALCHEMY = 8;    // 炼金工坊
+      PERSON_COMP = 9;    // 个人竞赛
+      ANY_ACTIVITY = 999;  // 任意跟随活动的限购
+  }
+}
+
+// 卡池类型
+message RECRUIT_POOL_TYPE {
+  enum ENUM {
+      NONE = 0;
+    COMPANION = 1;  // 佣兵
+      ARTIFACT = 2;  // 神器
+      GEM = 4;  // 宝石
+  }
+}
+
+// 道具类型
+message ITEM_TYPE {
+  enum ENUM {
+      NONE = 0;
+      GIFT_DROP = 3;   // 礼包掉落
+      GIFT_SELECT = 4;   // 礼包选择
+    COMPANION_UNIVERSAL_FRAGMENT = 5;   // 佣兵万能碎片
+      RECHARGE = 9;   // 代金券
+      PET_EQUIPMENT_EXP = 20;  // 战宠装备升级经验材料
+      FESTIVAL_ACTIVITY = 21;  // 节庆活动消耗道具
+      SLG_SUPPLY_TOKEN = 25;  // SLG补给令
+      GIFT_DROP_GROUP = 30;  // 礼包掉落(drop_group_info)
+      GIFT_SELECT_GROUP = 31;  // 礼包选择(drop_group_info)
+      VIP_EXP_POINT = 32;  // VIP经验道具
+  }
+}
+
+// 佣兵来源类型
+message CHARACTER_SOURCE_TYPE {
+  enum ENUM {
+      OWN = 0;  // 自己的佣兵
+    ROGUE = 1;  // 迷宫玩法
+  }
+}
+
+// 特权类型
+message PRIVILEGE_TYPE {
+  enum ENUM {
+      NONE = 0;
+      NAME_STYLE = 1;    // 姓名的样式
+      BATTLE_SPEED = 2;    // 战斗X倍速
+      TREASURE_OPEN_SPEED = 3;    // 自动开箱X倍速
+      EQUIP_SELL_COIN_ADD = 4;    // 装备售卖获得的金币增加 万分比
+      EQUIP_SELL_EXP_ADD = 5;    // 装备售卖获得的经验增加 万分比
+      HANGUP_FREE_NUM_ADD = 6;    // 每日免费挂机收益次数增加 数值
+      ARENA_TICKET_NUM_ADD = 7;    // 竞技场挑战券上限增加 数值
+      WORLD_BOSS_CHALLENGE_NUM_ADD = 8;    // 世界BOSS挑战次数增加 数值
+      BACK_FINAL_RECRUIT_GUARANTEE_NUM = 9;    // 背饰最终卡池保底数
+      WORLD_BOSS_RESPAWN_NUM_ADD = 11;   // 世界BOSS复活次数增加 数值
+      GUILD_MEMBERS_LIMIT_ADD = 101;  // 公会成员数目上限增加
+      GUILD_UPGRADE_STRATEGY = 102;  // 解锁新的公会升级方案  // NOTE:策划说不考虑回退特权的情况,一旦有这个特权就肯定一直有
+      GUILD_USER_QUEST_GUILD_ADD = 103;  // 公会个人任务代币增加万分比
+      GUILD_WEEKLY_TASK_GUILD_ADD = 104;  // 公会任务物资增加万分比
+      GUILD_PROGRESS_TASK_GUILD_ADD = 105;  // 公会任务进度奖励增加万分比
+      GUILD_TECH_UPGRADE = 106;  // 公会科技加速时间提升万分比
+      TREASURE_BOX_UPGRADE_COIN_DEC = 201;  // 宝箱升级箱子折扣百分比
+      GUILD_SIGN_ADD = 203;  // 公会签到加成
+      TREASURE_BOX_ACCELERATE = 204;  // 宝箱加速提高加速时间万分比
+      GUILD_DAILY_ADD = 205;  // 公会每日凌晨5点自动获得公会物资
+      GUILD_UNLOCK_ICON = 206;  // 解锁更新的公会旗帜图样  // NOTE:策划说不考虑回退特权的情况,一旦有这个特权就肯定一直有
+      GUILD_BOSS_REWARD_ADD = 301;  // 公会 boss 奖励加成万分比
+      ARENA_CHALLENGE_ADD = 302;  // 竞技长挑战金币加成万分比
+      WORLD_BOSS_TREASURE_BOX_NUM_ADD = 303;  // 世界boss宝箱数量增加万分比
+      ROGUE_REWARD_ADD = 304;  // rogue 迷宫周任务奖励,小材料提升万分比
+    GUILD_PERSON_MAIL_TREAUSRE_BOX_ADD = 305;  // 邮件箱子增加
+      GUILD_PERSON_MAIL_GUILD_GOLD_ADD = 306;  // 邮件公会代币增加
+
+      TERRITORY_TRADE_AREA_BEST = 401;  // 领地交易区最佳交易
+      TERRITORY_AUTO_TRADE_DISPATCH = 402;  // 领地自动派遣
+    TERRITORY_LUMBER_YARD_PRODUCT_ADD = 403;  // 领地伐木场产量增加
+      TERRITORY_LUMBER_YARD_TIME_ADD = 404;  // 领地伐木场时间增加
+      TERRITORY_FARM_FIELD_PRODUCT_ADD = 405;  // 领地伐木场产量增加
+      TERRITORY_FARM_FIELD_TIME_ADD = 406;  // 领地伐木场时间增加
+      TERRITORY_MINE_FIELD_PRODUCT_ADD = 407;  // 领地伐木场产量增加
+      TERRITORY_MINE_FIELD_TIME_ADD = 408;  // 领地伐木场时间增加
+      HANG_UP_CHEST_PRODUCT_ADD = 409;  // 挂机宝箱产出速度提升特权
+      HANG_UP_EXP_PRODUCT_ADD = 410;  // 挂机经验产出速度提升特权
+      HANGUP_GOLD_PRODUCT_ADD = 411;  // 挂机金币产出速度提升特权
+
+      TREASURE_OPEN_ATTR_ADD = 501;  // 开箱子属性加成
+      ARENA_CHALLENGE_ATTR_ADD = 502;  // 竞技场挑战属性加成
+      HANG_UP_ATTR_ADD = 503;  // 挂机属性加成
+      WORLD_BOSS_CLG_ATTR_ADD = 504;  // 世界boss挑战属性加成
+      INFINITE_DUNGEON_HANGUP_ATTR_ADD = 505;  // 地牢挂机属性加成
+      TOWER_CHALLENGE_ATTR_ADD = 506;  // 爬塔挑战属性加成
+      GUILD_GVE_CHALLENGE_ATTR_ADD = 507;  // 公会战役挑战属性加成
+      TERRITORY_TREAD_DISPATCH_ATTR_ADD = 508;  // 领地交易区派遣属性加成
+      TERRITORY_LUMBER_YARD_RESOURCE_ADD = 509;  // 领地伐木场木材产量加成
+      TREASURY_GOLD_ADD_EFFECT = 510;  // 失落宝藏每次通关/扫荡，有X%%概率暴击，获得Y倍金币
+      BACK_LEGENDARY_BUY_PRICE_DEC = 511;  // 传说背饰购买价格降低X%%
+      GUILD_SIGN_IN_COST_DEC = 512;  // 公会签到消耗钻石数量降低X%%
+      TERRITORY_LORD_LEVY_REWARD_ADD = 513;  // 领地领主征税奖励加成
+      COMPANION_RECRUIT_FREE_COST = 514;  // 佣兵触发免费招募
+      PET_SELECT_RETURN_COST = 515;  // 战宠购买返还消耗
+      ARTIFACT_FREE_UPGRADE = 516;  // 神器免费升级
+      OPEN_TREASURE_BOX_AWARDS_ADD = 517;  // 开宝箱奖励加成
+
+      ARENA_CHALLENGE_BUY_NUM_ADD = 601;  // 竞技场每日购买次数增加X次
+      HANGUP_BUY_NUM_ADD = 602;  // 每日挂机购买次数增加X次
+      WORLD_BOSS_BUY_CHALLENGE_NUM_ADD = 603;  // 首领试炼每日可购买挑战次数增加X次
+      TREASURY_GOLD_BUY_CHALLENGE_NUM_ADD = 604;  // 失落宝藏每日可购买挑战次数增加X次
+      INFINITE_DUNGEON_HANGUP_BUY_NUM_ADD = 605;  // 无尽地牢放置奖励可购买次数增加X次
+      HANG_UP_CHEST_SPEED_ADD = 606;  // 挂机宝箱产出速度提升X%%(万分比)
+      UNLOCK_COMPANION_BOOK = 607;  // 提前解锁主角职业的id
+      SLG_STAMINA_BUY_NUM_ADD = 608;  // 永恒战场野怪每日可购买次数增加X次
+      SLG_BOSS_BUY_CHALLENGE_NUM_ADD = 609;  // 永恒战场组队地穴每日可购买次数增加X次
+      HANG_UP_EXP_SPEED_ADD = 610;  // 挂机经验产出速度提升X%%(万分比)
+      HANG_UP_GOLD_SPEED_ADD = 611;  // 挂机金币产出速度提升X%%(万分比)
+      TERRITORY_DISPATCH_NUM_ADD = 612;  // 领地派遣次数增加X次
+  }
+}
+
+// 成就状态
+message ACHIEVEMENT_STATE {
+  enum ENUM {
+      NONE = 0;  // 初始状态
+    COMPLETED = 1;  // 完成
+      AWARDED = 2;  // 已领奖
+  }
+}
+
+// 地牢挂机领奖类型
+message INFINITE_DUNGEON_HANGUP_AWARD_TP {
+  enum ENUM {
+      NORMAL = 0;  // 正常挂机
+    UP_SPEED = 1;  // 加速挂机
+  }
+}
+
+// 服务器初始化时间
+message INIT_TIME_TYPE {
+  enum ENUM {
+      NONE = 0;
+      TWO_DAYS = 1;  // 每两天重置时间
+    THREE_DAYS = 2;  // 每三天重置时间
+  }
+}
+
+// 装备ICON类型
+message EQUIPMENT_ICON_TP {
+  enum ENUM {
+    ILLUSION = 0;  // 本体/幻化 装备:id为装备baseId 背饰:id为背饰advanceId
+      DRESS = 1;  // 时装 id为时装baseId
+  }
+}
+
+// 佣兵装备类型
+message COMPANION_EQUIPMENT_TYPE {
+  enum ENUM {
+      NONE = 0;
+    WEAPON = 1;  // 武器
+    HELMET = 2;  // 头盔
+      ARMOR = 3;  // 盔甲
+      SHOES = 4;  // 鞋子
+      MAX = 5;
+  }
+}
+
+// 佣兵职业类型
+message COMPANION_PROFESSION_TYPE {
+  enum ENUM {
+      NONE = 0;
+      VANGUARD = 1;  // 先锋
+      FIGHTER = 2;  // 斗士
+      ASSASSIN = 3;  // 刺客
+    SHARPSHOOTER = 4;  // 射手
+      MYSTIC = 5;  // 神秘
+      MAGE = 6;  // 法师
+      MAX = 7;
+  }
+}
+
+message ACTION_PROGRESS_RESET_TYPE {
+  enum ENUM {
+      NONE = 0;
+      PERMANENT = 1;   // 永不重置
+      DAILY = 2;   // 每日重置
+      WEEKLY = 3;   // 每周重置
+      MONTHLY = 4;   // 每月重置
+      MAIN_QUEST = 5;   // 随主线任务重置
+      ARENA_DAILY = 6;   // 竞技场每日重置
+      USER_GUILD_WEEKLY = 7;   // 公会每周重置(个人)
+      BATTLE_PASS = 8;   // 战令任务随赛季重置
+      ROGUE = 9;   // 随迷宫重置
+      HONOR = 10;  // 随头衔任务重置
+      THEME_ACTIVITY = 12;  // 随主题活动重置
+      TERRITORY = 13;  // 领地任务
+    COMPREHENSIVE_COMPETITION = 14;  // 综合竞赛
+      PARTNER_COMPETITION = 15;  // 伙伴竞赛
+      ARTIFACT_COMPETITION = 16;  // 神器竞赛
+      PET_COMPETITION = 17;  // 战宠竞赛
+      FESTIVAL_ACTIVITY = 18;  // 节庆活动
+      SLG_BATTLE_PASS = 19;  // SLG战令任务
+      SLG_MAIN_QUEST = 20;  // 永恒战场主线任务
+      SERIES_GIFT = 21;  // 一条龙礼包
+      GACHA = 22;  // 一番赏
+      BACK_COMPETITION = 23;  // 背饰竞赛
+      PARTNER_CIRCULATE = 24;  // 伙伴循环
+      ARTIFACT_CIRCULATE = 25;  // 神器循环
+      BACK_CIRCULATE = 26;  // 背饰循环
+      PET_CIRCULATE = 27;  // 战宠循环
+      SELECT_GIFT = 28;  // 自选礼包
+      PERSON_COMP_CHEST = 29;  // 个人竞赛-宝箱
+      PERSON_COMP_SOCIAL = 30;  // 个人竞赛-社交
+      PERSON_COMP_SLG = 31;  // 个人竞赛-slg
+      PERSON_COMP_PET = 32;  // 个人竞赛-战宠
+      SLG = 33;  // SLG个人任务
+      SLG_GUILD = 34;  // SLG公会任务
+      GUILD_WEEKLY = 35;  // 公会每周重置(公会)
+      CELEBRATION = 36;  // 节庆活动, 每期重置
+      MAX = 37;  // 新的任务在此之前增加
+  }
+}
+
+message TERRITORY_LORD_CONFRONT_STATE {
+  enum ENUM {
+    NONE = 0;
+    LORD = 1;  // 领主迎战
+    SELF = 2;  // 自身迎战
+  }
+}
+
+message SLG_BATTLE_TYPE {
+  enum ENUM {
+      NONE = 0;
+    MONSTER = 1;  // 野怪
+      BOSS = 2;  // 组队BOSS
+      CITY = 3;  // 攻城
+  }
+}
+
+message SLG_TEAM_STATUS {
+  enum ENUM {
+      NONE = 0;  // 空闲
+      MOVE = 1;  // 行军
+    RETURN = 2;  // 返回
+  }
+}
+
+message SLG_TROOP_TYPE {
+  enum ENUM {
+      NONE = 0;
+      SPEAR = 1;  // 枪兵
+    SHIELD = 2;  // 盾兵
+    ARCHER = 3;  // 弓兵
+      MAX = 4;
+  }
+}
+
+message NOTIFY_SYSTEM_TYPE {
+  enum ENUM {
+      NONE = 0;
+    THEME_ACTIVITY = 1;  // 魔法棋局
+      GACHA = 2;  // 一番赏
+      MAX = 3;
+  }
+}
+
+message AWARD_UNLOCK_TYPE {
+  enum ENUM {
+      NONE = 0;
+    SERVER_OPEN_TIME = 1;  // 根据开服时间解除
+      SERVER_TIME = 2;  // 根据绝对时间解除
+      MAX = 3;
+  }
+}
+
+message WISH_POOL_TYPE {
+  enum ENUM {
+      NONE = 0;
+      FISH = 1;  // 钓鱼
+    TIGER = 2;  // 老虎机
+      POP = 3;  // 弹弹乐
+      MAX = 4;
+  }
+}
+
+message PRIVILEGE_MODULE {
+    enum ENUM {
+        NONE = 0;
+        MONTH_CARD = 1;  // 月卡
+        GUILD_TECH = 2;  // 公会科技
+        ARTIFACT = 3;  // 神器
+        VIP = 4;  // VIP
+    }
+}
