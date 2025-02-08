@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, Callable, Awaitable
+from typing import Dict, Any, Optional, Callable, Awaitable, Tuple
 import asyncio
 import logging
 from .packet import BasePacket
@@ -49,7 +49,7 @@ class BaseProtocol(ABC):
                 
         except Exception as e:
             self._logger.error(f"Error handling message: {e}", exc_info=True)
-            
+
     def encode(self, message_id: int, data: Dict[str, Any]) -> bytes:
         """编码消息
         
@@ -62,7 +62,7 @@ class BaseProtocol(ABC):
         """
         return self._packet.pack(message_id, data)
         
-    def decode(self, data: bytes) -> tuple[int, Dict[str, Any]]:
+    def decode(self, data: bytes) -> Tuple[int, Dict[str, Any]]:
         """解码消息
         
         Args:
